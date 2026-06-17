@@ -258,12 +258,6 @@ function isModalOpen(el) {
 
 function closeTopLayer() {
   if (cleanFullscreen && cleanFullscreen.hidden === false) { exitCleanFullscreen(); return true; }
-  const modalPlaylistsEl = document.getElementById('modal-playlists');
-  if (modalPlaylistsEl && modalPlaylistsEl.hidden === false) {
-    if (activeListId) { activeListId = null; renderListsPanel(); return true; }
-    if (typeof window.closePlaylistsModal === 'function') window.closePlaylistsModal();
-    return true;
-  }
   const modals = [modalTrackMenu, modalRename, modalNewList, modalAddToList, modalPickSongs, modalTheme, modalSleep];
   const openModal = modals.find(isModalOpen);
   if (openModal) { openModal.hidden = true; return true; }
@@ -388,7 +382,7 @@ function setActiveTab(tab) {
 function updateTabs() {
   tabAll.classList.toggle('active', activeTab === 'all');
   tabFav.classList.toggle('active', activeTab === 'favorites');
-  if (tabLists) tabLists.classList.toggle('active', activeTab === 'lists');
+  tabLists.classList.toggle('active', activeTab === 'lists');
   tabTop.classList.toggle('active', activeTab === 'top');
   sortSelect.disabled = activeTab === 'top';
   sortSelect.value = sortMode;
@@ -633,8 +627,6 @@ async function renderAdminList() {
   const size = await dbGetTotalSize();
   adminCount.textContent = formatSongCount(tracks.length);
   adminSize.textContent = `${(size / 1024 / 1024).toFixed(1)} MB used`;
-  var sizeDash = document.getElementById('admin-size-dash');
-  if (sizeDash) sizeDash.textContent = `${(size / 1024 / 1024).toFixed(1)} MB`;
   emptyState.classList.toggle('visible', tracks.length === 0);
   adminList.innerHTML = '';
   if (!tracks.length) return;
@@ -1009,36 +1001,10 @@ function renderLyricsCollection(container, lines, className = 'flow-line') {
     return;
   }
   container.innerHTML = lines.map((line, index) => `
-    <div class="${className}" data-idx="${index}" data-time="${line.time}" style="cursor:pointer;">
+    <div class="${className}" data-idx="${index}">
       ${wordSpans(line)}
     </div>
   `).join('');
-
-  // Tap en línea:
-  // - Tap simple → seek a esa línea
-  // - Doble tap → entrar en fullscreen (igual que antes)
-  var tapTimer = null;
-  container.querySelectorAll('[data-time]').forEach(function(el) {
-    el.addEventListener('click', function(e) {
-      e.stopPropagation();
-      var t = parseFloat(el.dataset.time);
-      if (tapTimer) {
-        // Doble tap — cancelar seek pendiente y abrir fullscreen
-        clearTimeout(tapTimer);
-        tapTimer = null;
-        if (typeof enterCleanFullscreen === 'function') enterCleanFullscreen();
-      } else {
-        // Esperar 250ms para ver si viene un segundo tap
-        tapTimer = setTimeout(function() {
-          tapTimer = null;
-          if (Number.isFinite(t) && typeof Player !== 'undefined') {
-            Player.seek(t);
-            if (!Player.isPlaying) Player.play();
-          }
-        }, 250);
-      }
-    });
-  });
 }
 
 function renderInlineLyricsList() {
@@ -1448,7 +1414,7 @@ if (btnAdminNight) btnAdminNight.addEventListener('click', () => { const on = ap
 
 tabAll.addEventListener('click', () => setActiveTab('all'));
 tabFav.addEventListener('click', () => setActiveTab('favorites'));
-if (tabLists) tabLists.addEventListener('click', () => setActiveTab('lists'));
+tabLists.addEventListener('click', () => setActiveTab('lists'));
 tabTop.addEventListener('click', () => setActiveTab('top'));
 sortSelect.addEventListener('change', () => {
   sortMode = sortSelect.value;
@@ -1555,16 +1521,6 @@ if (dashShowTop) dashShowTop.addEventListener('click', () => {
   setActiveTab('top');
   showMainScreen('player');
 });
-const dashShowSongs = document.getElementById('dash-show-songs');
-const dashShowFavorites = document.getElementById('dash-show-favorites');
-if (dashShowSongs) dashShowSongs.addEventListener('click', () => {
-  setActiveTab('all');
-  showMainScreen('player');
-});
-if (dashShowFavorites) dashShowFavorites.addEventListener('click', () => {
-  setActiveTab('favorites');
-  showMainScreen('player');
-});
 listDeleteBtn.addEventListener('click', async () => {
   if (!activeListId) return;
   if (!confirm('Delete this playlist? Songs will stay in your library.')) return;
@@ -1603,11 +1559,7 @@ if (fullscreenPrev) fullscreenPrev.addEventListener('click', (event) => { event.
 if (fullscreenNext) fullscreenNext.addEventListener('click', (event) => { event.stopPropagation(); Player.next(true); showFullscreenControls(); });
 if (fullscreenPlay) fullscreenPlay.addEventListener('click', (event) => { event.stopPropagation(); Player.togglePlay(); showFullscreenControls(); });
 if (fullscreenProgressWrap) fullscreenProgressWrap.addEventListener('click', (event) => { event.stopPropagation(); seekFromPointer(event, fullscreenProgressWrap); showFullscreenControls(); });
-if (cleanFullscreen) cleanFullscreen.addEventListener('click', (event) => {
-  // No activar toggle si el tap fue en una línea de letra o en botón
-  if (event.target.closest('button') || event.target.closest('.fullscreen-progress-wrap') || event.target.closest('.flow-line')) return;
-  toggleFullscreenControls();
-});
+if (cleanFullscreen) cleanFullscreen.addEventListener('click', (event) => { if (event.target.closest('button') || event.target.closest('.fullscreen-progress-wrap')) return; toggleFullscreenControls(); });
 lyricsContent.addEventListener('click', () => {
   const now = Date.now();
   if (now - lastLyricsTap < 320) toggleLyricsFullscreen();
@@ -1694,256 +1646,73 @@ Player.onTrackChange = (track) => {
   if (track) loadLyricsForTrack(track, lyricsVisible);
   else if (lyricsVisible) showLyricsState('no-track');
   renderPlaylist();
-  updateFavNowBtn(track);
 };
-
-function updateFavNowBtn(track) {
-  const icon = document.getElementById('fav-now-icon');
-  const btn  = document.getElementById('btn-fav-now');
-  if (!icon || !btn) return;
-  const isFav = track?.favorite === true;
-  icon.className = isFav ? 'ti ti-heart-filled' : 'ti ti-heart';
-  btn.style.color = isFav ? 'var(--fav, #fb6fb8)' : '';
-}
-
-const btnFavNow = document.getElementById('btn-fav-now');
-if (btnFavNow) {
-  btnFavNow.addEventListener('click', async () => {
-    const track = Player.currentTrack();
-    if (!track) return;
-    const next = await dbToggleFavorite(track.id);
-    // Actualizar en memoria
-    const t = Player.tracks.find(t => t.id === track.id);
-    if (t) t.favorite = next;
-    updateFavNowBtn({ ...track, favorite: next });
-    renderPlaylist();
-    showToast(next ? '♥ Added to Favorites' : 'Removed from Favorites');
-  });
-}
 
 Lyrics.onSync = updateLyricsHighlight;
 
 // ── Init ──────────────────────────────────
-// Botones inline en barra de tabs
-(function() {
-  var themeInline = document.getElementById('btn-theme-inline');
-  var sleepInline = document.getElementById('btn-sleep-inline');
-  var adminInline = document.getElementById('btn-admin-inline');
-  if (themeInline) themeInline.addEventListener('click', function() {
-    if (typeof modalTheme !== 'undefined' && modalTheme) modalTheme.hidden = false;
-  });
-  if (sleepInline) sleepInline.addEventListener('click', function() {
-    if (typeof SleepTimer !== 'undefined' && SleepTimer.active) SleepTimer.cancel();
-    else if (typeof modalSleep !== 'undefined' && modalSleep) modalSleep.hidden = false;
-  });
-  if (adminInline) adminInline.addEventListener('click', function() {
-    if (typeof showMainScreen === 'function') showMainScreen('admin');
-  });
 
-  // Botones del panel deslizable (swipe) en track-info
-  var sleepSwipe = document.getElementById('btn-sleep-swipe');
-  var themeSwipe = document.getElementById('btn-theme-swipe');
-  var adminSwipe = document.getElementById('btn-admin-swipe');
-  if (sleepSwipe) sleepSwipe.addEventListener('click', function() {
-    if (typeof SleepTimer !== 'undefined' && SleepTimer.active) SleepTimer.cancel();
-    else if (typeof modalSleep !== 'undefined' && modalSleep) modalSleep.hidden = false;
-  });
-  if (themeSwipe) themeSwipe.addEventListener('click', function() {
-    if (typeof modalTheme !== 'undefined' && modalTheme) modalTheme.hidden = false;
-  });
-  if (adminSwipe) adminSwipe.addEventListener('click', function() {
-    if (typeof showMainScreen === 'function') showMainScreen('admin');
-  });
+// ══════════════════════════════════════
+// HOUSE PAOLA — Background Carousel
+// ══════════════════════════════════════
+const BACKGROUNDS = [
+  { id: 'bg1', src: 'images/bg-main.jpg',   label: 'Dragon Queen' },
+  { id: 'bg2', src: 'images/bg-alt.jpg',    label: 'Dragon Castle' },
+  { id: 'bg3', src: 'images/bg-lyrics.jpg', label: 'Galaxy Night' },
+  { id: 'bg4', src: 'images/bg-extra1.jpg', label: 'Sagittarius' },
+  { id: 'bg5', src: 'images/bg-extra2.jpg', label: 'Magic Room' },
+  { id: 'bg6', src: 'images/bg-extra3.jpg', label: 'Blue Castle' },
+];
+const LS_BG = 'house_paola_bg';
+let activeBgId = localStorage.getItem(LS_BG) || 'bg1';
 
-  // Swipe horizontal en track-info para revelar el panel oculto
-  var trackSwipe = document.getElementById('track-info-swipe');
-  if (trackSwipe) {
-    var swipeStartX = 0, swipeStartY = 0, swiping = false;
-    trackSwipe.addEventListener('pointerdown', function(e) {
-      swipeStartX = e.clientX;
-      swipeStartY = e.clientY;
-      swiping = true;
+function applyBackground(id) {
+  activeBgId = id;
+  localStorage.setItem(LS_BG, id);
+  const bg = BACKGROUNDS.find(b => b.id === id);
+  if (!bg) return;
+  document.documentElement.style.setProperty('--bg-image', `url('${bg.src}')`);
+  document.querySelectorAll('.bg-thumb').forEach(el => {
+    el.classList.toggle('active', el.dataset.id === id);
+  });
+}
+
+function initBgPicker() {
+  const toggle  = document.getElementById('bg-toggle');
+  const options = document.getElementById('bg-options');
+  if (!toggle || !options) return;
+
+  // Crear miniaturas
+  options.innerHTML = BACKGROUNDS.map(bg => `
+    <div class="bg-thumb ${bg.id === activeBgId ? 'active' : ''}"
+         data-id="${bg.id}"
+         style="background-image:url('${bg.src}')"
+         title="${bg.label}"
+         role="button"
+         aria-label="Background: ${bg.label}">
+    </div>
+  `).join('');
+
+  options.querySelectorAll('.bg-thumb').forEach(el => {
+    el.addEventListener('click', () => {
+      applyBackground(el.dataset.id);
     });
-    trackSwipe.addEventListener('pointerup', function(e) {
-      if (!swiping) return;
-      swiping = false;
-      var dx = e.clientX - swipeStartX;
-      var dy = e.clientY - swipeStartY;
-      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
-      if (dx < 0) trackSwipe.classList.add('panel-open');
-      else trackSwipe.classList.remove('panel-open');
-    });
-    trackSwipe.addEventListener('pointercancel', function() { swiping = false; });
-  }
+  });
 
-  // Resize con "snap" a 3 tamaños (como Spotify): arrastras desde casi
-  // cualquier parte (letra o lista) y al soltar se ajusta solo a
-  // pequeño / mediano / grande. Un tap normal sigue funcionando igual
-  // (botones, líneas de letra, doble-tap a fullscreen, etc).
-  var resizeHandle = document.getElementById('resize-handle');
-  var learningCard = document.querySelector('.learning-card');
-  var playlistSectionEl = document.querySelector('.main-list-topline');
-  var screenPlayerEl = document.getElementById('screen-player');
+  toggle.addEventListener('click', () => {
+    options.classList.toggle('hidden');
+  });
 
-  var SNAP_RATIOS = [0.30, 0.55, 0.85]; // pequeño / mediano / grande (proporción de la pantalla para la letra)
-  var snapIndex = 1; // arranca en "mediano"
-
-  function applySnap(index, animate) {
-    snapIndex = Math.max(0, Math.min(SNAP_RATIOS.length - 1, index));
-    var totalH = screenPlayerEl.getBoundingClientRect().height;
-    var h = totalH * SNAP_RATIOS[snapIndex];
-    learningCard.style.transition = animate ? 'flex-basis 0.28s cubic-bezier(.2,.8,.2,1)' : 'none';
-    learningCard.style.flex = '0 0 ' + h + 'px';
-  }
-
-  function setupResizeDrag(zone, opts) {
-    opts = opts || {};
-    if (!zone || !learningCard || !screenPlayerEl) return;
-    var dragStartY = 0;
-    var startH = 0;
-    var dragging = false;
-    var activePointerId = null;
-    var threshold = opts.threshold || 8;
-    var scrollEl = opts.scrollEl || null; // si se da, respeta el scroll de este elemento
-
-    zone.addEventListener('pointerdown', function(e) {
-      // No iniciar drag sobre controles interactivos
-      if (e.target.closest('button, input, .progress-section, .controls-row')) return;
-      dragStartY = e.clientY;
-      startH = learningCard.getBoundingClientRect().height;
-      dragging = false;
-      activePointerId = e.pointerId;
-    });
-
-    zone.addEventListener('pointermove', function(e) {
-      if (activePointerId === null || e.buttons !== 1) return;
-      var dy = e.clientY - dragStartY;
-
-      if (!dragging) {
-        if (Math.abs(dy) < threshold) return;
-
-        if (scrollEl) {
-          var atTop = scrollEl.scrollTop <= 0;
-          var atBottom = scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 1;
-          // dy > 0 = dedo bajando = lista quiere mostrar contenido de arriba (solo posible si atTop)
-          // dy < 0 = dedo subiendo = lista quiere mostrar contenido de abajo (solo posible si atBottom)
-          var canIntercept = (dy > 0 && atTop) || (dy < 0 && atBottom);
-          if (!canIntercept) return; // dejar que el scroll nativo actúe
-        }
-
-        dragging = true;
-        if (resizeHandle) resizeHandle.classList.add('dragging');
-        learningCard.style.transition = 'none';
-        try { zone.setPointerCapture(activePointerId); } catch (_) {}
-      }
-
-      var totalH = screenPlayerEl.getBoundingClientRect().height;
-      var newH = startH + dy;
-      var minH = totalH * (SNAP_RATIOS[0] - 0.08);
-      var maxH = totalH * 0.94;
-      newH = Math.min(Math.max(newH, minH), maxH);
-      learningCard.style.flex = '0 0 ' + newH + 'px';
-      e.preventDefault();
-    }, { passive: false });
-
-    function endDrag(e) {
-      if (activePointerId === null) return;
-      if (resizeHandle) resizeHandle.classList.remove('dragging');
-      if (dragging) {
-        var totalH = screenPlayerEl.getBoundingClientRect().height;
-        var curH = learningCard.getBoundingClientRect().height;
-        var ratio = curH / totalH;
-
-        // Si se arrastró casi al máximo, abrir pantalla completa de letras
-        if (ratio >= 0.90 && typeof enterCleanFullscreen === 'function') {
-          applySnap(SNAP_RATIOS.length - 1, true);
-          enterCleanFullscreen();
-        } else {
-          // Buscar el snap más cercano
-          var best = 0, bestDist = Infinity;
-          for (var i = 0; i < SNAP_RATIOS.length; i++) {
-            var d = Math.abs(SNAP_RATIOS[i] - ratio);
-            if (d < bestDist) { bestDist = d; best = i; }
-          }
-          applySnap(best, true);
-        }
-      }
-      dragging = false;
-      activePointerId = null;
+  // Cerrar si toca fuera
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#bg-picker')) {
+      options.classList.add('hidden');
     }
-    zone.addEventListener('pointerup', endDrag);
-    zone.addEventListener('pointercancel', endDrag);
-  }
-
-  // La tarjeta de letras responde al arrastre desde casi cualquier punto
-  setupResizeDrag(learningCard);
-  // La barra de pestañas de la lista también (no scrollea, así que siempre intercepta)
-  if (playlistSectionEl) setupResizeDrag(playlistSectionEl);
-  // La lista de canciones: respeta su propio scroll, pero permite redimensionar
-  // cuando el dedo arrastra "más allá" del límite de scroll (arriba/abajo)
-  var playlistListEl = document.getElementById('playlist');
-  if (playlistListEl) setupResizeDrag(playlistListEl, { scrollEl: playlistListEl });
-  // El tirador explícito también funciona (umbral menor)
-  setupResizeDrag(resizeHandle, { threshold: 2 });
-
-  // Tocar el tirador alterna entre los 3 tamaños
-  if (resizeHandle) {
-    resizeHandle.addEventListener('click', function() {
-      applySnap((snapIndex + 1) % SNAP_RATIOS.length, true);
-    });
-  }
-
-  // Tamaño inicial
-  applySnap(snapIndex, false);
-
-  var playlistsAdmin = document.getElementById('btn-playlists-admin');
-  var modalPlaylists = document.getElementById('modal-playlists');
-  var playlistsModalBody = document.getElementById('playlists-modal-body');
-  var playlistsModalClose = document.getElementById('playlists-modal-close');
-  var playlistsOriginalParent = null;
-  var playlistsOriginalNext = null;
-
-  if (playlistsAdmin) playlistsAdmin.addEventListener('click', async function() {
-    if (!modalPlaylists || !playlistsModalBody || !listsPanel) return;
-    // Guardar posición original de los paneles (solo la primera vez)
-    if (!playlistsOriginalParent) {
-      playlistsOriginalParent = listsPanel.parentNode;
-      playlistsOriginalNext = listsPanel.nextSibling;
-    }
-    // Mover los paneles al modal
-    playlistsModalBody.appendChild(listsPanel);
-    playlistsModalBody.appendChild(listDetail);
-    listsPanel.hidden = false;
-    listDetail.hidden = true;
-    activeListId = null;
-    await renderListsPanel();
-    modalPlaylists.hidden = false;
   });
 
-  function closePlaylistsModal() {
-    if (!modalPlaylists) return;
-    modalPlaylists.hidden = true;
-    // Devolver los paneles a su lugar original
-    if (playlistsOriginalParent) {
-      if (playlistsOriginalNext) {
-        playlistsOriginalParent.insertBefore(listsPanel, playlistsOriginalNext);
-        playlistsOriginalParent.insertBefore(listDetail, playlistsOriginalNext);
-      } else {
-        playlistsOriginalParent.appendChild(listsPanel);
-        playlistsOriginalParent.appendChild(listDetail);
-      }
-    }
-    listsPanel.hidden = true;
-    listDetail.hidden = true;
-    activeListId = null;
-  }
-
-  if (playlistsModalClose) playlistsModalClose.addEventListener('click', closePlaylistsModal);
-  if (modalPlaylists) modalPlaylists.addEventListener('click', function(e) {
-    if (e.target === modalPlaylists) closePlaylistsModal();
-  });
-  window.closePlaylistsModal = closePlaylistsModal;
-})();
+  // Aplicar el guardado
+  applyBackground(activeBgId);
+}
 
 (async function init() {
   applyTheme(localStorage.getItem(LS_THEME) || 'midnight');
@@ -1953,6 +1722,7 @@ Lyrics.onSync = updateLyricsHighlight;
   updateTabs();
   updateTransportButtons();
   Player.setupMediaSession();
+  initBgPicker();
   await Player.loadLibrary();
   await renderPlaylist();
   await renderDashboard();
