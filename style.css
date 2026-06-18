@@ -1508,10 +1508,7 @@ body[data-night="true"] {
 body[data-night="true"]::before { opacity: 0.18; }
 
 .screen-player.learning-screen {
-  background:
-    radial-gradient(circle at 50% -10%, var(--glow), transparent 34%),
-    linear-gradient(180deg, rgba(255,255,255,0.025), transparent 22%),
-    var(--bg);
+  background: none;
 }
 .minimal-topbar {
   justify-content: flex-end;
