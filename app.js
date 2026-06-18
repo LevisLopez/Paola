@@ -1671,7 +1671,15 @@ function applyBackground(id) {
   localStorage.setItem(LS_BG, id);
   const bg = BACKGROUNDS.find(b => b.id === id);
   if (!bg) return;
+  // Aplicar en :root y directamente en .learning-screen para máxima compatibilidad
   document.documentElement.style.setProperty('--bg-image', `url('${bg.src}')`);
+  const screen = document.querySelector('.learning-screen');
+  if (screen) {
+    screen.style.backgroundImage = `linear-gradient(rgba(8,2,15,0.65), rgba(8,2,15,0.65)), url('${bg.src}')`;
+    screen.style.backgroundSize = 'cover';
+    screen.style.backgroundPosition = 'center center';
+    screen.style.backgroundRepeat = 'no-repeat';
+  }
   document.querySelectorAll('.bg-thumb').forEach(el => {
     el.classList.toggle('active', el.dataset.id === id);
   });
