@@ -34,7 +34,7 @@ body {
   --word-e: #c084fc;
   --word-f: #5eead4;
   --bg-image: url('images/bg-main.jpg');
-  --bg-overlay: rgba(8, 2, 15, 0.72);
+  --bg-overlay: rgba(8, 2, 15, 0.65);
 }
 
 body[data-theme="electric"] {
@@ -1104,8 +1104,10 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
 .learning-screen {
   background:
     var(--bg-overlay),
-    var(--bg-image) center top / cover no-repeat fixed,
+    var(--bg-image) center center / cover no-repeat,
     var(--bg);
+  background-size: 100% 100%, cover, auto;
+  -webkit-background-size: cover;
 }
 .learning-topbar {
   padding: calc(14px + var(--safe-top)) clamp(14px, 4vw, 22px) 8px;
