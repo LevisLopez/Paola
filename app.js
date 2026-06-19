@@ -1646,7 +1646,80 @@ Player.onTrackChange = (track) => {
   if (track) loadLyricsForTrack(track, lyricsVisible);
   else if (lyricsVisible) showLyricsState('no-track');
   renderPlaylist();
+  updateAlbumArt(track);
+  updateFavNowBtn(track);
 };
+
+// ── Album art from MP3 metadata ──────────
+async function updateAlbumArt(track) {
+  const zone = document.getElementById('album-art-img');
+  if (!zone) return;
+  if (!track) {
+    zone.style.backgroundImage = "url('./images/bg-main.jpg')";
+    return;
+  }
+  try {
+    const full = await dbGetTrack(track.id);
+    if (full && full.blob) {
+      // Extraer portada del MP3 usando jsmediatags si está disponible
+      // Por ahora usar imagen de fondo activa
+      const activeBg = BACKGROUNDS.find(b => b.id === activeBgId);
+      zone.style.backgroundImage = activeBg ? `url('${activeBg.src}')` : "url('./images/bg-main.jpg')";
+    }
+  } catch (_) {
+    zone.style.backgroundImage = "url('./images/bg-main.jpg')";
+  }
+}
+
+// ── Favorite button in controls ──────────
+function updateFavNowBtn(track) {
+  const icon = document.getElementById('fav-now-icon');
+  const btn  = document.getElementById('btn-fav-now');
+  if (!icon || !btn) return;
+  const isFav = track?.favorite === true;
+  icon.className = isFav ? 'ti ti-heart-filled' : 'ti ti-heart';
+  btn.classList.toggle('on', isFav);
+  btn.style.color = isFav ? '#a855f7' : '';
+}
+
+const btnFavNow = document.getElementById('btn-fav-now');
+if (btnFavNow) {
+  btnFavNow.addEventListener('click', async () => {
+    const track = Player.currentTrack();
+    if (!track) return;
+    const next = await dbToggleFavorite(track.id);
+    const t = Player.tracks.find(t => t.id === track.id);
+    if (t) t.favorite = next;
+    updateFavNowBtn({ ...track, favorite: next });
+    renderPlaylist();
+    showToast(next ? '♥ Added to Favorites' : 'Removed from Favorites');
+  });
+}
+
+// ── Bottom navigation ────────────────────
+const navMusic     = document.getElementById('nav-music');
+const navFavorites = document.getElementById('nav-favorites');
+const navSettings  = document.getElementById('nav-settings');
+
+function setBottomNav(active) {
+  [navMusic, navFavorites, navSettings].forEach(b => b && b.classList.remove('active'));
+  if (active) active.classList.add('active');
+}
+
+if (navMusic) navMusic.addEventListener('click', () => {
+  setActiveTab('all');
+  showMainScreen('player');
+  setBottomNav(navMusic);
+});
+if (navFavorites) navFavorites.addEventListener('click', () => {
+  setActiveTab('favorites');
+  showMainScreen('player');
+  setBottomNav(navFavorites);
+});
+if (navSettings) navSettings.addEventListener('click', () => {
+  showMainScreen('admin');
+  setBottomNav(navSettings);
+});
 
 Lyrics.onSync = updateLyricsHighlight;
 
