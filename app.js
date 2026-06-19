@@ -8,6 +8,14 @@ const screenAdmin = $('screen-admin');
 const screenLyrics = $('screen-lyrics');
 const trackTitle = $('track-title');
 const trackArtist = $('track-artist');
+const trackArtwork = $('track-artwork');
+
+const ARTWORKS = ['images/bg-main.jpg', 'images/bg-alt.jpg', 'images/bg-extra1.jpg', 'images/bg-extra2.jpg', 'images/bg-extra3.jpg'];
+function artworkForTrack(track) {
+  if (!track) return ARTWORKS[0];
+  const id = Number(track.id) || 0;
+  return ARTWORKS[id % ARTWORKS.length];
+}
 const progressFill = $('progress-fill');
 const progressThumb = $('progress-thumb');
 const progressWrap = $('progress-wrap');
@@ -1638,6 +1646,7 @@ Player.onStatsChange = () => {
 Player.onTrackChange = (track) => {
   trackTitle.textContent = track ? (track.title || 'Unknown') : 'No track loaded';
   trackArtist.textContent = track ? (track.artist || 'Unknown') : 'Add songs to get started';
+  if (trackArtwork) trackArtwork.src = artworkForTrack(track);
   lyricsTrackTitle.textContent = track ? (track.title || 'Unknown') : '—';
   lyricsTrackArtist.textContent = track ? (track.artist || 'Unknown') : '—';
   resetInlineLyrics();
@@ -1646,92 +1655,22 @@ Player.onTrackChange = (track) => {
   if (track) loadLyricsForTrack(track, lyricsVisible);
   else if (lyricsVisible) showLyricsState('no-track');
   renderPlaylist();
-  updateAlbumArt(track);
-  updateFavNowBtn(track);
 };
-
-// ── Album art from MP3 metadata ──────────
-async function updateAlbumArt(track) {
-  const zone = document.getElementById('album-art-img');
-  if (!zone) return;
-  if (!track) {
-    zone.style.backgroundImage = "url('./images/bg-main.jpg')";
-    return;
-  }
-  try {
-    const full = await dbGetTrack(track.id);
-    if (full && full.blob) {
-      // Extraer portada del MP3 usando jsmediatags si está disponible
-      // Por ahora usar imagen de fondo activa
-      const activeBg = BACKGROUNDS.find(b => b.id === activeBgId);
-      zone.style.backgroundImage = activeBg ? `url('${activeBg.src}')` : "url('./images/bg-main.jpg')";
-    }
-  } catch (_) {
-    zone.style.backgroundImage = "url('./images/bg-main.jpg')";
-  }
-}
-
-// ── Favorite button in controls ──────────
-function updateFavNowBtn(track) {
-  const icon = document.getElementById('fav-now-icon');
-  const btn  = document.getElementById('btn-fav-now');
-  if (!icon || !btn) return;
-  const isFav = track?.favorite === true;
-  icon.className = isFav ? 'ti ti-heart-filled' : 'ti ti-heart';
-  btn.classList.toggle('on', isFav);
-  btn.style.color = isFav ? '#a855f7' : '';
-}
-
-const btnFavNow = document.getElementById('btn-fav-now');
-if (btnFavNow) {
-  btnFavNow.addEventListener('click', async () => {
-    const track = Player.currentTrack();
-    if (!track) return;
-    const next = await dbToggleFavorite(track.id);
-    const t = Player.tracks.find(t => t.id === track.id);
-    if (t) t.favorite = next;
-    updateFavNowBtn({ ...track, favorite: next });
-    renderPlaylist();
-    showToast(next ? '♥ Added to Favorites' : 'Removed from Favorites');
-  });
-}
-
-// ── Bottom navigation ────────────────────
-const navMusic     = document.getElementById('nav-music');
-const navFavorites = document.getElementById('nav-favorites');
-const navSettings  = document.getElementById('nav-settings');
-
-function setBottomNav(active) {
-  [navMusic, navFavorites, navSettings].forEach(b => b && b.classList.remove('active'));
-  if (active) active.classList.add('active');
-}
-
-if (navMusic) navMusic.addEventListener('click', () => {
-  setActiveTab('all');
-  showMainScreen('player');
-  setBottomNav(navMusic);
-});
-if (navFavorites) navFavorites.addEventListener('click', () => {
-  setActiveTab('favorites');
-  showMainScreen('player');
-  setBottomNav(navFavorites);
-});
-if (navSettings) navSettings.addEventListener('click', () => {
-  showMainScreen('admin');
-  setBottomNav(navSettings);
-});
 
 Lyrics.onSync = updateLyricsHighlight;
 
 // ── Init ──────────────────────────────────
-// ── House Paola — Background System ──────
+
+// ══════════════════════════════════════
+// HOUSE PAOLA — Background Carousel
+// ══════════════════════════════════════
 const BACKGROUNDS = [
-  { id: 'bg1', src: './images/bg-main.jpg',   label: 'Dragon Queen' },
-  { id: 'bg2', src: './images/bg-alt.jpg',    label: 'Dragon Castle' },
-  { id: 'bg3', src: './images/bg-lyrics.jpg', label: 'Galaxy Night' },
-  { id: 'bg4', src: './images/bg-extra1.jpg', label: 'Sagittarius' },
-  { id: 'bg5', src: './images/bg-extra2.jpg', label: 'Magic Room' },
-  { id: 'bg6', src: './images/bg-extra3.jpg', label: 'Blue Castle' },
+  { id: 'bg1', src: 'images/bg-main.jpg',   label: 'Dragon Queen' },
+  { id: 'bg2', src: 'images/bg-alt.jpg',    label: 'Dragon Castle' },
+  { id: 'bg3', src: 'images/bg-lyrics.jpg', label: 'Galaxy Night' },
+  { id: 'bg4', src: 'images/bg-extra1.jpg', label: 'Sagittarius' },
+  { id: 'bg5', src: 'images/bg-extra2.jpg', label: 'Magic Room' },
+  { id: 'bg6', src: 'images/bg-extra3.jpg', label: 'Blue Castle' },
 ];
 const LS_BG = 'house_paola_bg';
 let activeBgId = localStorage.getItem(LS_BG) || 'bg1';
@@ -1741,18 +1680,15 @@ function applyBackground(id) {
   localStorage.setItem(LS_BG, id);
   const bg = BACKGROUNDS.find(b => b.id === id);
   if (!bg) return;
-  // Aplicar directamente en body y screen-player
-  const overlay = 'linear-gradient(rgba(8,2,15,0.60), rgba(8,2,15,0.60))';
-  const imgUrl = `url('${bg.src}')`;
-  [document.body, document.querySelector('.screen-player'), document.querySelector('.learning-screen'), document.querySelector('.clean-fullscreen')]
-    .filter(Boolean)
-    .forEach(el => {
-      el.style.backgroundImage = `${overlay}, ${imgUrl}`;
-      el.style.backgroundSize = 'cover';
-      el.style.backgroundPosition = 'center center';
-      el.style.backgroundRepeat = 'no-repeat';
-      el.style.backgroundAttachment = 'scroll';
-    });
+  // Aplicar en :root y directamente en .learning-screen para máxima compatibilidad
+  document.documentElement.style.setProperty('--bg-image', `url('${bg.src}')`);
+  const screen = document.querySelector('.learning-screen');
+  if (screen) {
+    screen.style.backgroundImage = `linear-gradient(rgba(8,2,15,0.65), rgba(8,2,15,0.65)), url('${bg.src}')`;
+    screen.style.backgroundSize = 'cover';
+    screen.style.backgroundPosition = 'center center';
+    screen.style.backgroundRepeat = 'no-repeat';
+  }
   document.querySelectorAll('.bg-thumb').forEach(el => {
     el.classList.toggle('active', el.dataset.id === id);
   });
@@ -1763,10 +1699,11 @@ function initBgPicker() {
   const options = document.getElementById('bg-options');
   if (!toggle || !options) return;
 
+  // Crear miniaturas
   options.innerHTML = BACKGROUNDS.map(bg => `
     <div class="bg-thumb ${bg.id === activeBgId ? 'active' : ''}"
          data-id="${bg.id}"
-         style="background-image:url('${bg.src}');background-size:cover;background-position:center;"
+         style="background-image:url('${bg.src}')"
          title="${bg.label}"
          role="button"
          aria-label="Background: ${bg.label}">
@@ -1774,21 +1711,23 @@ function initBgPicker() {
   `).join('');
 
   options.querySelectorAll('.bg-thumb').forEach(el => {
-    el.addEventListener('click', (e) => {
-      e.stopPropagation();
+    el.addEventListener('click', () => {
       applyBackground(el.dataset.id);
-      options.classList.add('hidden');
     });
   });
 
-  toggle.addEventListener('click', (e) => {
-    e.stopPropagation();
+  toggle.addEventListener('click', () => {
     options.classList.toggle('hidden');
   });
 
-  document.addEventListener('click', () => options.classList.add('hidden'));
+  // Cerrar si toca fuera
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#bg-picker')) {
+      options.classList.add('hidden');
+    }
+  });
 
-  // Aplicar fondo guardado
+  // Aplicar el guardado
   applyBackground(activeBgId);
 }
 
@@ -1800,9 +1739,9 @@ function initBgPicker() {
   updateTabs();
   updateTransportButtons();
   Player.setupMediaSession();
+  initBgPicker();
   await Player.loadLibrary();
   await renderPlaylist();
-  initBgPicker();
   await renderDashboard();
   await dbRequestPersistentStorage();
 
