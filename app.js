@@ -1651,17 +1651,14 @@ Player.onTrackChange = (track) => {
 Lyrics.onSync = updateLyricsHighlight;
 
 // ── Init ──────────────────────────────────
-
-// ══════════════════════════════════════
-// HOUSE PAOLA — Background Carousel
-// ══════════════════════════════════════
+// ── House Paola — Background System ──────
 const BACKGROUNDS = [
-  { id: 'bg1', src: 'images/bg-main.jpg',   label: 'Dragon Queen' },
-  { id: 'bg2', src: 'images/bg-alt.jpg',    label: 'Dragon Castle' },
-  { id: 'bg3', src: 'images/bg-lyrics.jpg', label: 'Galaxy Night' },
-  { id: 'bg4', src: 'images/bg-extra1.jpg', label: 'Sagittarius' },
-  { id: 'bg5', src: 'images/bg-extra2.jpg', label: 'Magic Room' },
-  { id: 'bg6', src: 'images/bg-extra3.jpg', label: 'Blue Castle' },
+  { id: 'bg1', src: './images/bg-main.jpg',   label: 'Dragon Queen' },
+  { id: 'bg2', src: './images/bg-alt.jpg',    label: 'Dragon Castle' },
+  { id: 'bg3', src: './images/bg-lyrics.jpg', label: 'Galaxy Night' },
+  { id: 'bg4', src: './images/bg-extra1.jpg', label: 'Sagittarius' },
+  { id: 'bg5', src: './images/bg-extra2.jpg', label: 'Magic Room' },
+  { id: 'bg6', src: './images/bg-extra3.jpg', label: 'Blue Castle' },
 ];
 const LS_BG = 'house_paola_bg';
 let activeBgId = localStorage.getItem(LS_BG) || 'bg1';
@@ -1671,15 +1668,18 @@ function applyBackground(id) {
   localStorage.setItem(LS_BG, id);
   const bg = BACKGROUNDS.find(b => b.id === id);
   if (!bg) return;
-  // Aplicar en :root y directamente en .learning-screen para máxima compatibilidad
-  document.documentElement.style.setProperty('--bg-image', `url('${bg.src}')`);
-  const screen = document.querySelector('.learning-screen');
-  if (screen) {
-    screen.style.backgroundImage = `linear-gradient(rgba(8,2,15,0.65), rgba(8,2,15,0.65)), url('${bg.src}')`;
-    screen.style.backgroundSize = 'cover';
-    screen.style.backgroundPosition = 'center center';
-    screen.style.backgroundRepeat = 'no-repeat';
-  }
+  // Aplicar directamente en body y screen-player
+  const overlay = 'linear-gradient(rgba(8,2,15,0.60), rgba(8,2,15,0.60))';
+  const imgUrl = `url('${bg.src}')`;
+  [document.body, document.querySelector('.screen-player'), document.querySelector('.learning-screen')]
+    .filter(Boolean)
+    .forEach(el => {
+      el.style.backgroundImage = `${overlay}, ${imgUrl}`;
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center center';
+      el.style.backgroundRepeat = 'no-repeat';
+      el.style.backgroundAttachment = 'scroll';
+    });
   document.querySelectorAll('.bg-thumb').forEach(el => {
     el.classList.toggle('active', el.dataset.id === id);
   });
@@ -1690,11 +1690,10 @@ function initBgPicker() {
   const options = document.getElementById('bg-options');
   if (!toggle || !options) return;
 
-  // Crear miniaturas
   options.innerHTML = BACKGROUNDS.map(bg => `
     <div class="bg-thumb ${bg.id === activeBgId ? 'active' : ''}"
          data-id="${bg.id}"
-         style="background-image:url('${bg.src}')"
+         style="background-image:url('${bg.src}');background-size:cover;background-position:center;"
          title="${bg.label}"
          role="button"
          aria-label="Background: ${bg.label}">
@@ -1702,23 +1701,21 @@ function initBgPicker() {
   `).join('');
 
   options.querySelectorAll('.bg-thumb').forEach(el => {
-    el.addEventListener('click', () => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
       applyBackground(el.dataset.id);
+      options.classList.add('hidden');
     });
   });
 
-  toggle.addEventListener('click', () => {
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
     options.classList.toggle('hidden');
   });
 
-  // Cerrar si toca fuera
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('#bg-picker')) {
-      options.classList.add('hidden');
-    }
-  });
+  document.addEventListener('click', () => options.classList.add('hidden'));
 
-  // Aplicar el guardado
+  // Aplicar fondo guardado
   applyBackground(activeBgId);
 }
 
@@ -1730,9 +1727,9 @@ function initBgPicker() {
   updateTabs();
   updateTransportButtons();
   Player.setupMediaSession();
-  initBgPicker();
   await Player.loadLibrary();
   await renderPlaylist();
+  initBgPicker();
   await renderDashboard();
   await dbRequestPersistentStorage();
 
