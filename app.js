@@ -1671,7 +1671,7 @@ function applyBackground(id) {
   // Aplicar directamente en body y screen-player
   const overlay = 'linear-gradient(rgba(8,2,15,0.60), rgba(8,2,15,0.60))';
   const imgUrl = `url('${bg.src}')`;
-  [document.body, document.querySelector('.screen-player'), document.querySelector('.learning-screen')]
+  [document.body, document.querySelector('.screen-player'), document.querySelector('.learning-screen'), document.querySelector('.clean-fullscreen')]
     .filter(Boolean)
     .forEach(el => {
       el.style.backgroundImage = `${overlay}, ${imgUrl}`;
