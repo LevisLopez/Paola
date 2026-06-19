@@ -1827,3 +1827,154 @@ body[data-night="true"]::before { opacity: 0.18; }
 }
 .bg-thumb.active { border-color: #a78bfa; transform: scale(1.1); }
 .bg-thumb:active { transform: scale(0.92); }
+
+/* ══════════════════════════════════════
+   HOUSE PAOLA — Album Art Layout
+══════════════════════════════════════ */
+
+/* Quitar padding/margin del now-card para layout limpio */
+.learning-card {
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Zona de imagen/letra — ocupa ~45% */
+.album-art-zone {
+  position: relative;
+  flex: 0 0 44svh;
+  min-height: 200px;
+  overflow: hidden;
+}
+
+/* Imagen del álbum */
+.album-art-img {
+  position: absolute;
+  inset: 0;
+  background: url('./images/bg-main.jpg') center top / cover no-repeat;
+  transition: background-image 0.4s ease;
+}
+
+/* Gradiente para leer texto sobre la imagen */
+.album-art-zone::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60%;
+  background: linear-gradient(to top, rgba(8,2,15,0.85), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ícono default cuando no hay portada */
+.album-art-default {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+  color: rgba(167,139,250,0.3);
+  z-index: 0;
+}
+
+/* Letras sobre la imagen */
+.learning-lyrics {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 12px 20px !important;
+}
+
+/* Track info row */
+.track-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 6px;
+  flex-shrink: 0;
+}
+.track-info-row .compact-track-info {
+  flex: 1;
+  min-width: 0;
+  padding: 0 !important;
+  text-align: left;
+}
+.track-info-row .track-title {
+  font-size: clamp(20px, 5.5vw, 28px);
+  font-weight: 700;
+  color: #f5f0ff;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.track-info-row .track-artist {
+  font-size: clamp(13px, 3.5vw, 16px);
+  color: #a78bfa;
+  margin-top: 2px;
+}
+
+/* Fav button in track row */
+.fav-now-btn {
+  flex-shrink: 0;
+  font-size: 22px !important;
+  color: rgba(167,139,250,0.5);
+}
+.fav-now-btn.on { color: #a855f7 !important; }
+
+/* Bottom nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: calc(60px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: rgba(8,2,15,0.92);
+  backdrop-filter: blur(16px);
+  border-top: 0.5px solid rgba(167,139,250,0.15);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  z-index: 50;
+}
+.bottom-nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding-top: 10px;
+  background: none;
+  border: none;
+  color: rgba(167,139,250,0.45);
+  font-size: 11px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.bottom-nav-btn i { font-size: 22px; }
+.bottom-nav-btn.active { color: #a78bfa; }
+.bottom-nav-btn span { font-weight: 500; letter-spacing: 0.02em; }
+
+/* Ajustar playlist para no quedar tapada por el bottom-nav */
+.main-list-section {
+  padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* Quitar topbar vacío — reducirlo al mínimo */
+.minimal-topbar {
+  padding: var(--safe-top) 16px 0 !important;
+  min-height: var(--safe-top) !important;
+  height: var(--safe-top) !important;
+}
