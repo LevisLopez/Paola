@@ -10,7 +10,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -39,25 +39,33 @@
     </div>
 
     <section class="now-card learning-card" aria-label="Now playing and lyrics">
-      <div class="track-artwork-wrap">
-        <img id="track-artwork" class="track-artwork" src="images/bg-main.jpg" alt="" />
-      </div>
-      <div class="track-info compact-track-info">
-        <div id="track-title" class="track-title">No track loaded</div>
-        <div id="track-artist" class="track-artist">Add songs to get started</div>
-      </div>
 
-      <div id="inline-lyrics" class="inline-lyrics learning-lyrics" aria-live="polite" title="Double tap for full screen lyrics">
-        <div id="inline-no-lyrics" class="inline-no-lyrics clean-empty-lyrics">
-          <span>Lyrics will appear here</span>
-          <small>Double tap the lyrics area for clean full screen.</small>
+      <!-- Album art zone -->
+      <div class="album-art-zone" id="album-art-zone">
+        <div id="album-art-img" class="album-art-img">
+          <div class="album-art-default"><i class="ti ti-music"></i></div>
         </div>
-        <div id="inline-lyrics-flow" class="lyrics-flow" aria-label="Synced lyrics"></div>
-        <div id="inline-prev-line" class="inline-line prev legacy-inline" hidden></div>
-        <div id="inline-active-line" class="inline-line active legacy-inline" hidden></div>
-        <div id="inline-next-line" class="inline-line next legacy-inline" hidden></div>
+        <div id="inline-lyrics" class="inline-lyrics learning-lyrics" aria-live="polite" title="Double tap for full screen lyrics">
+          <div id="inline-no-lyrics" class="inline-no-lyrics clean-empty-lyrics">
+            <span>Lyrics will appear here</span>
+          </div>
+          <div id="inline-lyrics-flow" class="lyrics-flow" aria-label="Synced lyrics"></div>
+          <div id="inline-prev-line" class="inline-line prev legacy-inline" hidden></div>
+          <div id="inline-active-line" class="inline-line active legacy-inline" hidden></div>
+          <div id="inline-next-line" class="inline-line next legacy-inline" hidden></div>
+        </div>
       </div>
 
+      <!-- Track info below art -->
+      <div class="track-info-row">
+        <div class="track-info compact-track-info">
+          <div id="track-title" class="track-title">No track loaded</div>
+          <div id="track-artist" class="track-artist">Add songs to get started</div>
+        </div>
+        <button id="btn-fav-now" class="fav-now-btn ctrl-btn" aria-label="Favorite"><i class="ti ti-heart" id="fav-now-icon"></i></button>
+      </div>
+
+      <!-- Progress + Controls -->
       <div class="bottom-player-panel">
         <div class="progress-section">
           <div class="progress-bar-wrap" id="progress-wrap" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -73,11 +81,11 @@
         </div>
 
         <div class="controls-row clean-controls-row">
-          <button id="btn-shuffle" class="ctrl-btn" aria-label="Shuffle" title="Shuffle"><i class="ti ti-arrows-shuffle"></i></button>
-          <button id="btn-prev" class="ctrl-btn" aria-label="Previous" title="Previous"><i class="ti ti-player-skip-back"></i></button>
-          <button id="btn-play" class="play-btn" aria-label="Play or pause" title="Play / Pause"><i class="ti ti-player-play" id="play-icon"></i></button>
-          <button id="btn-next" class="ctrl-btn" aria-label="Next" title="Next"><i class="ti ti-player-skip-forward"></i></button>
-          <button id="btn-repeat" class="ctrl-btn" aria-label="Repeat" title="Repeat"><i class="ti ti-repeat"></i></button>
+          <button id="btn-shuffle" class="ctrl-btn" aria-label="Shuffle"><i class="ti ti-arrows-shuffle"></i></button>
+          <button id="btn-prev" class="ctrl-btn" aria-label="Previous"><i class="ti ti-player-skip-back"></i></button>
+          <button id="btn-play" class="play-btn" aria-label="Play or pause"><i class="ti ti-player-play" id="play-icon"></i></button>
+          <button id="btn-next" class="ctrl-btn" aria-label="Next"><i class="ti ti-player-skip-forward"></i></button>
+          <button id="btn-repeat" class="ctrl-btn" aria-label="Repeat"><i class="ti ti-repeat"></i></button>
         </div>
       </div>
     </section>
@@ -339,6 +347,21 @@
       </section>
     </section>
   </section>
+  <!-- Bottom navigation -->
+  <nav class="bottom-nav" aria-label="Main navigation">
+    <button class="bottom-nav-btn active" id="nav-music" aria-label="Music">
+      <i class="ti ti-music"></i>
+      <span>Music</span>
+    </button>
+    <button class="bottom-nav-btn" id="nav-favorites" aria-label="Favorites">
+      <i class="ti ti-heart"></i>
+      <span>Favorites</span>
+    </button>
+    <button class="bottom-nav-btn" id="nav-settings" aria-label="Settings">
+      <i class="ti ti-settings"></i>
+      <span>Settings</span>
+    </button>
+  </nav>
 </main>
 
 <!-- RENAME MODAL -->
@@ -447,7 +470,7 @@
 
 <!-- BACKGROUND PICKER -->
 <div class="bg-picker" id="bg-picker">
-  <button class="bg-picker-toggle" id="bg-toggle" aria-label="Change background" title="Change background">
+  <button class="bg-picker-toggle" id="bg-toggle" aria-label="Change background">
     <i class="ti ti-photo"></i>
   </button>
   <div class="bg-options hidden" id="bg-options"></div>
