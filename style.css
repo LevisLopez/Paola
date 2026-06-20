@@ -254,8 +254,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   border: 1px solid rgba(167,139,250,0.15);
   box-shadow: none;
   backdrop-filter: blur(2px);
+  flex-shrink: 0;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
 }
 .now-card::after {
   content: '';
@@ -1496,7 +1497,7 @@ body[data-night="true"] {
 }
 body[data-night="true"]::before { opacity: 0.18; }
 
-.screen-player.learning-screen { background: transparent; }
+.screen-player.learning-screen { background: #08020f; }
 .minimal-topbar {
   justify-content: flex-end;
   padding: calc(10px + var(--safe-top)) clamp(12px, 4vw, 22px) 6px;
@@ -1516,7 +1517,7 @@ body[data-night="true"]::before { opacity: 0.18; }
 .subtle-online-btn { color: var(--accent2) !important; }
 
 .learning-card {
-  flex: 1 1 auto;
+  flex: 0 0 clamp(330px, 54vh, 520px);
   min-height: 0;
   margin: 3px clamp(10px, 3.2vw, 18px) 8px;
   padding: clamp(11px, 3vw, 17px);
@@ -1733,6 +1734,7 @@ body[data-night="true"]::before { opacity: 0.18; }
 .pick-song-item i { color: var(--accent2); font-size: 20px; }
 
 @media (max-width: 430px) {
+  .learning-card { flex-basis: clamp(320px, 52vh, 450px); }
   .dashboard-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .dashboard-lists { grid-template-columns: 1fr; }
   .main-list-section .playlist-item { gap: 8px; }
@@ -1742,6 +1744,7 @@ body[data-night="true"]::before { opacity: 0.18; }
 
 @media (max-height: 700px) {
   .minimal-topbar { min-height: calc(52px + var(--safe-top)); padding-top: calc(8px + var(--safe-top)); }
+  .learning-card { flex-basis: clamp(300px, 50vh, 380px); }
   .clean-controls-row .ctrl-btn { width: 38px; height: 38px; font-size: 21px; }
   .clean-controls-row .play-btn { width: 56px; height: 56px; }
   .lyrics-flow .flow-line { font-size: clamp(19px, 6.3vw, 31px); }
@@ -1880,17 +1883,17 @@ body[data-night="true"]::before { opacity: 0.18; }
   z-index: 0;
 }
 
-/* Tarjeta de letras — sección normal debajo del track-info (ya no es overlay sobre la imagen) */
+/* Letras sobre la imagen */
 .learning-lyrics {
-  flex: 0 0 auto;
-  min-height: clamp(90px, 16vh, 140px);
-  margin: 4px clamp(10px, 3vw, 18px) 8px;
-  padding: 12px 16px;
-  border-radius: clamp(18px, 5vw, 26px);
-  background: rgba(0,0,0,0.20);
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  padding: 12px 20px !important;
 }
 
 /* Track info row */
@@ -1969,4 +1972,9 @@ body[data-night="true"]::before { opacity: 0.18; }
   padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
 }
 
-/* (regla de minimal-topbar removida — colapsaba el header de HOUSE PAOLA) */
+/* Quitar topbar vacío — reducirlo al mínimo */
+.minimal-topbar {
+  padding: var(--safe-top) 16px 0 !important;
+  min-height: var(--safe-top) !important;
+  height: var(--safe-top) !important;
+}
