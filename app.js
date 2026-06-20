@@ -1,5 +1,6 @@
 /* ═══════════════════════════════════════
-   app.js — Aurora Player modern UI controller
+   app.js — House Paola · Music of the Dragon Queen
+   Based on Aurora Player — personalized for Paola ♐
 ═══════════════════════════════════════ */
 const $ = (id) => document.getElementById(id);
 
