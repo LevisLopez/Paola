@@ -1650,25 +1650,17 @@ Player.onTrackChange = (track) => {
   updateFavNowBtn(track);
 };
 
-// ── Album art from MP3 metadata ──────────
+// ── Album art — rota por canción, independiente del selector de fondo ──
+const ALBUM_ARTWORKS = ['./images/bg-main.jpg', './images/bg-alt.jpg', './images/bg-extra1.jpg', './images/bg-extra2.jpg', './images/bg-extra3.jpg'];
+function artworkForTrack(track) {
+  if (!track) return ALBUM_ARTWORKS[0];
+  const id = Number(track.id) || 0;
+  return ALBUM_ARTWORKS[id % ALBUM_ARTWORKS.length];
+}
 async function updateAlbumArt(track) {
   const zone = document.getElementById('album-art-img');
   if (!zone) return;
-  if (!track) {
-    zone.style.backgroundImage = "url('./images/bg-main.jpg')";
-    return;
-  }
-  try {
-    const full = await dbGetTrack(track.id);
-    if (full && full.blob) {
-      // Extraer portada del MP3 usando jsmediatags si está disponible
-      // Por ahora usar imagen de fondo activa
-      const activeBg = BACKGROUNDS.find(b => b.id === activeBgId);
-      zone.style.backgroundImage = activeBg ? `url('${activeBg.src}')` : "url('./images/bg-main.jpg')";
-    }
-  } catch (_) {
-    zone.style.backgroundImage = "url('./images/bg-main.jpg')";
-  }
+  zone.style.backgroundImage = `url('${artworkForTrack(track)}')`;
 }
 
 // ── Favorite button in controls ──────────
