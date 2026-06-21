@@ -1747,18 +1747,25 @@ function applyBackground(id) {
   localStorage.setItem(LS_BG, id);
   const bg = BACKGROUNDS.find(b => b.id === id);
   if (!bg) return;
-  // Aplicar directamente en body y screen-player
-  const overlay = 'linear-gradient(rgba(8,2,15,0.60), rgba(8,2,15,0.60))';
-  const imgUrl = `url('${bg.src}')`;
-  [document.body, document.querySelector('.screen-player'), document.querySelector('.learning-screen'), document.querySelector('.clean-fullscreen')]
+
+  // SOLO aplicar en album-art-img — nunca en body ni screen
+  const artImg = document.getElementById('album-art-img');
+  if (artImg) {
+    artImg.style.backgroundImage = `url('${bg.src}')`;
+    artImg.style.backgroundSize = 'cover';
+    artImg.style.backgroundPosition = 'center center';
+    artImg.style.backgroundRepeat = 'no-repeat';
+  }
+
+  // Limpiar cualquier imagen del body y screens
+  [document.body, document.querySelector('.screen-player'), document.querySelector('.learning-screen')]
     .filter(Boolean)
     .forEach(el => {
-      el.style.backgroundImage = `${overlay}, ${imgUrl}`;
-      el.style.backgroundSize = 'cover';
-      el.style.backgroundPosition = 'center center';
-      el.style.backgroundRepeat = 'no-repeat';
-      el.style.backgroundAttachment = 'scroll';
+      el.style.backgroundImage = 'none';
+      el.style.background = '#08020f';
     });
+
+  // Actualizar miniaturas activas
   document.querySelectorAll('.bg-thumb').forEach(el => {
     el.classList.toggle('active', el.dataset.id === id);
   });
