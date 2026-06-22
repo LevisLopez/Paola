@@ -10,18 +10,18 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icons/icon-192.png" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Cinzel:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<main class="app-shell" aria-label="Aurora English learning app">
+<main class="app-shell" aria-label="House Paola music player">
   <!-- MAIN LEARNING PLAYER -->
   <section id="screen-player" class="screen screen-player active learning-screen" aria-label="Learning player screen">
     <header class="top-bar learning-topbar minimal-topbar">
       <div class="house-header" aria-label="House Paola">
-        <div class="house-crown">♛</div>
+        <div class="house-crown" aria-hidden="true">♛</div>
         <div class="house-name">HOUSE PAOLA <span class="house-sag">♐</span></div>
         <div class="house-sub">MUSIC OF THE DRAGON QUEEN</div>
       </div>
@@ -114,7 +114,7 @@
       <div id="empty-top" class="empty-state-soft" hidden>
         <i class="ti ti-chart-bar-off"></i>
         <p>No listening history yet</p>
-        <span>Play songs and Aurora will build your Top 10.</span>
+        <span>Play songs and House Paola will build your Top 10.</span>
       </div>
 
       <div id="lists-panel" class="lists-panel" hidden>
@@ -470,6 +470,7 @@
 
 <!-- BACKGROUND PICKER -->
 <div class="bg-picker" id="bg-picker">
+  <button class="bg-mode-toggle" id="bg-mode-toggle" aria-label="Toggle automatic background by artist">Manual</button>
   <button class="bg-picker-toggle" id="bg-toggle" aria-label="Change background">
     <i class="ti ti-photo"></i>
   </button>
