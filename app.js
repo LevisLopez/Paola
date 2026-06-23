@@ -1364,7 +1364,7 @@ function addDownloadedFromPhone() {
 }
 
 // ── Event bindings ────────────────────────
-btnOpenAdmin.addEventListener('click', openAdminScreen);
+if (btnOpenAdmin) btnOpenAdmin.addEventListener('click', openAdminScreen);
 btnBack.addEventListener('click', () => showMainScreen('player'));
 
 btnPlay.addEventListener('click', () => Player.togglePlay());
@@ -1653,46 +1653,15 @@ Player.onTrackChange = (track) => {
   updateFavNowBtn(track);
 };
 
-// ── Album art: manual background OR auto-by-artist ──
+// ── Album art: manual background picker ──
 async function updateAlbumArt(track) {
   const zone = document.getElementById('album-art-img');
   if (!zone) return;
-  if (bgMode === 'auto') {
-    const src = artworkForTrack(track);
-    zone.style.backgroundImage = `url('${src}')`;
-    zone.style.backgroundSize = 'cover';
-    zone.style.backgroundPosition = 'center 28%';
-    zone.style.backgroundRepeat = 'no-repeat';
-    return;
-  }
-  // Manual mode: respect whatever the user picked via the background picker
   const bg = BACKGROUNDS.find(b => b.id === activeBgId) || BACKGROUNDS[0];
   zone.style.backgroundImage = `url('${bg.src}')`;
   zone.style.backgroundSize = 'cover';
   zone.style.backgroundPosition = 'center 28%';
   zone.style.backgroundRepeat = 'no-repeat';
-}
-
-// ── Auto-by-artist mapping (House Paola) ──
-// Maps a track's artist/title to one of the existing 6 backgrounds.
-// Falls back to the dragon queen image (bg-main.jpg) when no match is found.
-const ARTIST_BG_MAP = [
-  { match: /adele/i,                      bg: 'bg1' }, // Dragon Queen
-  { match: /coldplay/i,                    bg: 'bg2' }, // Dragon Castle
-  { match: /billie\s*eilish/i,             bg: 'bg3' }, // Galaxy Night
-  { match: /lady\s*gaga|bradley\s*cooper/i, bg: 'bg4' }, // Sagittarius
-];
-function artworkForTrack(track) {
-  const fallback = BACKGROUNDS.find(b => b.id === 'bg1') || BACKGROUNDS[0];
-  if (!track) return fallback.src;
-  const haystack = `${track.artist || ''} ${track.title || ''}`;
-  for (const rule of ARTIST_BG_MAP) {
-    if (rule.match.test(haystack)) {
-      const bg = BACKGROUNDS.find(b => b.id === rule.bg);
-      if (bg) return bg.src;
-    }
-  }
-  return fallback.src;
 }
 
 // ── Favorite button in controls ──────────
@@ -1796,8 +1765,6 @@ const BACKGROUNDS = [
 ];
 const LS_BG = 'house_paola_bg';
 let activeBgId = localStorage.getItem(LS_BG) || 'bg1';
-const LS_BG_MODE = 'house_paola_bg_mode';
-let bgMode = localStorage.getItem(LS_BG_MODE) || 'manual'; // 'manual' | 'auto'
 
 function applyBackground(id) {
   activeBgId = id;
@@ -1810,7 +1777,7 @@ function applyBackground(id) {
   if (artImg) {
     artImg.style.backgroundImage = `url('${bg.src}')`;
     artImg.style.backgroundSize = 'cover';
-    artImg.style.backgroundPosition = 'center center';
+    artImg.style.backgroundPosition = 'center 28%';
     artImg.style.backgroundRepeat = 'no-repeat';
   }
 
@@ -1831,7 +1798,6 @@ function applyBackground(id) {
 function initBgPicker() {
   const toggle  = document.getElementById('bg-toggle');
   const options = document.getElementById('bg-options');
-  const modeBtn = document.getElementById('bg-mode-toggle');
   if (!toggle || !options) return;
 
   options.innerHTML = BACKGROUNDS.map(bg => `
@@ -1847,11 +1813,6 @@ function initBgPicker() {
   options.querySelectorAll('.bg-thumb').forEach(el => {
     el.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (bgMode === 'auto') {
-        bgMode = 'manual';
-        localStorage.setItem(LS_BG_MODE, bgMode);
-        if (modeBtn) { modeBtn.textContent = 'Manual'; modeBtn.classList.remove('auto-on'); }
-      }
       applyBackground(el.dataset.id);
       options.classList.add('hidden');
     });
@@ -1863,27 +1824,6 @@ function initBgPicker() {
   });
 
   document.addEventListener('click', () => options.classList.add('hidden'));
-
-  function refreshModeBtn() {
-    if (!modeBtn) return;
-    modeBtn.textContent = bgMode === 'auto' ? 'Auto' : 'Manual';
-    modeBtn.classList.toggle('auto-on', bgMode === 'auto');
-    modeBtn.title = bgMode === 'auto'
-      ? 'Auto: background follows the artist. Tap to switch to manual.'
-      : 'Manual: you pick the background. Tap to switch to auto by artist.';
-  }
-  if (modeBtn) {
-    refreshModeBtn();
-    modeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      bgMode = bgMode === 'auto' ? 'manual' : 'auto';
-      localStorage.setItem(LS_BG_MODE, bgMode);
-      refreshModeBtn();
-      options.classList.toggle('hidden', bgMode === 'auto');
-      updateAlbumArt(Player.currentTrack());
-      showToast(bgMode === 'auto' ? '♐ Auto background by artist' : '🖼 Manual background');
-    });
-  }
 
   // Aplicar fondo guardado
   applyBackground(activeBgId);
