@@ -1732,7 +1732,6 @@ if (listSheetHandle) {
   }, { passive: true });
 }
 
-// Music — goes to player and opens song list
 if (navMusic) navMusic.addEventListener('click', () => {
   setActiveTab('all');
   showMainScreen('player');
@@ -1740,44 +1739,36 @@ if (navMusic) navMusic.addEventListener('click', () => {
   openListSheet();
 });
 
-// ── Utility buttons in bottom-nav ──────────────────────────────
-const btnBgNav      = document.getElementById('btn-bg-nav');
-const btnSleepNav   = document.getElementById('btn-sleep-nav');
-const btnThemeNav   = document.getElementById('btn-theme-nav');
-const btnSettingsNav = document.getElementById('btn-settings-nav');
+// ── Utility buttons wired after DOM ready ──────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const btnBgNav       = document.getElementById('btn-bg-nav');
+  const btnSleepNav    = document.getElementById('btn-sleep-nav');
+  const btnThemeNav    = document.getElementById('btn-theme-nav');
+  const btnSettingsNav = document.getElementById('btn-settings-nav');
+  const bgOptions      = document.getElementById('bg-options');
 
-// BG — toggle the bg-options panel
-if (btnBgNav) {
-  btnBgNav.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const options = document.getElementById('bg-options');
-    if (options) options.classList.toggle('hidden');
-  });
-  // Close bg-options when clicking elsewhere
-  document.addEventListener('click', () => {
-    const options = document.getElementById('bg-options');
-    if (options) options.classList.add('hidden');
-  });
-}
-
-// Sleep / Night mode
-if (btnSleepNav) btnSleepNav.addEventListener('click', () => {
-  const on = applyNightMode();
-  showToast(on ? 'Night mode on 🌙' : 'Night mode off');
-  btnSleepNav.classList.toggle('util-on', on);
-});
-
-// Theme picker
-if (btnThemeNav) btnThemeNav.addEventListener('click', () => {
-  if (typeof modalTheme !== 'undefined' && modalTheme) {
-    modalTheme.hidden = false;
-    if (typeof renderThemeOptions === 'function') renderThemeOptions();
+  if (btnBgNav && bgOptions) {
+    btnBgNav.addEventListener('click', (e) => {
+      e.stopPropagation();
+      bgOptions.classList.toggle('hidden');
+    });
+    document.addEventListener('click', () => bgOptions.classList.add('hidden'));
   }
-});
 
-// Settings
-if (btnSettingsNav) btnSettingsNav.addEventListener('click', () => {
-  showMainScreen('admin');
+  if (btnSleepNav) btnSleepNav.addEventListener('click', () => {
+    const on = applyNightMode();
+    showToast(on ? 'Night mode on 🌙' : 'Night mode off');
+    btnSleepNav.classList.toggle('util-on', on);
+  });
+
+  if (btnThemeNav) btnThemeNav.addEventListener('click', () => {
+    const mt = document.getElementById('modal-theme');
+    if (mt) { mt.hidden = false; if (typeof renderThemeOptions === 'function') renderThemeOptions(); }
+  });
+
+  if (btnSettingsNav) btnSettingsNav.addEventListener('click', () => {
+    showMainScreen('admin');
+  });
 });
 
 Lyrics.onSync = updateLyricsHighlight;
@@ -1801,13 +1792,24 @@ function applyBackground(id) {
   const bg = BACKGROUNDS.find(b => b.id === id);
   if (!bg) return;
 
-  // SOLO aplicar en album-art-img — nunca en body ni screen
+  const commonStyle = `url('${bg.src}')`;
+
+  // Player album art zone
   const artImg = document.getElementById('album-art-img');
   if (artImg) {
-    artImg.style.backgroundImage = `url('${bg.src}')`;
+    artImg.style.backgroundImage = commonStyle;
     artImg.style.backgroundSize = 'cover';
-    artImg.style.backgroundPosition = 'center 28%';
+    artImg.style.backgroundPosition = 'center top';
     artImg.style.backgroundRepeat = 'no-repeat';
+  }
+
+  // Fullscreen karaoke background
+  const fullscreen = document.getElementById('clean-fullscreen');
+  if (fullscreen) {
+    fullscreen.style.backgroundImage = commonStyle;
+    fullscreen.style.backgroundSize = 'cover';
+    fullscreen.style.backgroundPosition = 'center top';
+    fullscreen.style.backgroundRepeat = 'no-repeat';
   }
 
   // Limpiar cualquier imagen del body y screens
@@ -1815,7 +1817,6 @@ function applyBackground(id) {
     .filter(Boolean)
     .forEach(el => {
       el.style.backgroundImage = 'none';
-      el.style.background = '#08020f';
     });
 
   // Actualizar miniaturas activas
@@ -1845,6 +1846,36 @@ function initBgPicker() {
       options.classList.add('hidden');
     });
   });
+
+  // Aplicar fondo guardado
+  applyBackground(activeBgId);
+}
+  if (!toggle || !options) return;
+
+  options.innerHTML = BACKGROUNDS.map(bg => `
+    <div class="bg-thumb ${bg.id === activeBgId ? 'active' : ''}"
+         data-id="${bg.id}"
+         style="background-image:url('${bg.src}');background-size:cover;background-position:center;"
+         title="${bg.label}"
+         role="button"
+         aria-label="Background: ${bg.label}">
+    </div>
+  `).join('');
+
+  options.querySelectorAll('.bg-thumb').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      applyBackground(el.dataset.id);
+      options.classList.add('hidden');
+    });
+  });
+
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    options.classList.toggle('hidden');
+  });
+
+  document.addEventListener('click', () => options.classList.add('hidden'));
 
   // Aplicar fondo guardado
   applyBackground(activeBgId);
