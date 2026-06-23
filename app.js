@@ -1691,11 +1691,9 @@ if (btnFavNow) {
 
 // ── Bottom navigation ────────────────────
 const navMusic     = document.getElementById('nav-music');
-const navFavorites = document.getElementById('nav-favorites');
-const navSettings  = document.getElementById('nav-settings');
 
 function setBottomNav(active) {
-  [navMusic, navFavorites, navSettings].forEach(b => b && b.classList.remove('active'));
+  [navMusic].forEach(b => b && b.classList.remove('active'));
   if (active) active.classList.add('active');
 }
 
@@ -1734,21 +1732,52 @@ if (listSheetHandle) {
   }, { passive: true });
 }
 
+// Music — goes to player and opens song list
 if (navMusic) navMusic.addEventListener('click', () => {
   setActiveTab('all');
   showMainScreen('player');
   setBottomNav(navMusic);
   openListSheet();
 });
-if (navFavorites) navFavorites.addEventListener('click', () => {
-  setActiveTab('favorites');
-  showMainScreen('player');
-  setBottomNav(navFavorites);
-  openListSheet();
+
+// ── Utility buttons in bottom-nav ──────────────────────────────
+const btnBgNav      = document.getElementById('btn-bg-nav');
+const btnSleepNav   = document.getElementById('btn-sleep-nav');
+const btnThemeNav   = document.getElementById('btn-theme-nav');
+const btnSettingsNav = document.getElementById('btn-settings-nav');
+
+// BG — toggle the bg-options panel
+if (btnBgNav) {
+  btnBgNav.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const options = document.getElementById('bg-options');
+    if (options) options.classList.toggle('hidden');
+  });
+  // Close bg-options when clicking elsewhere
+  document.addEventListener('click', () => {
+    const options = document.getElementById('bg-options');
+    if (options) options.classList.add('hidden');
+  });
+}
+
+// Sleep / Night mode
+if (btnSleepNav) btnSleepNav.addEventListener('click', () => {
+  const on = applyNightMode();
+  showToast(on ? 'Night mode on 🌙' : 'Night mode off');
+  btnSleepNav.classList.toggle('util-on', on);
 });
-if (navSettings) navSettings.addEventListener('click', () => {
+
+// Theme picker
+if (btnThemeNav) btnThemeNav.addEventListener('click', () => {
+  if (typeof modalTheme !== 'undefined' && modalTheme) {
+    modalTheme.hidden = false;
+    if (typeof renderThemeOptions === 'function') renderThemeOptions();
+  }
+});
+
+// Settings
+if (btnSettingsNav) btnSettingsNav.addEventListener('click', () => {
   showMainScreen('admin');
-  setBottomNav(navSettings);
 });
 
 Lyrics.onSync = updateLyricsHighlight;
@@ -1796,14 +1825,13 @@ function applyBackground(id) {
 }
 
 function initBgPicker() {
-  const toggle  = document.getElementById('bg-toggle');
   const options = document.getElementById('bg-options');
-  if (!toggle || !options) return;
+  if (!options) return;
 
   options.innerHTML = BACKGROUNDS.map(bg => `
     <div class="bg-thumb ${bg.id === activeBgId ? 'active' : ''}"
          data-id="${bg.id}"
-         style="background-image:url('${bg.src}');background-size:cover;background-position:center;"
+         style="background-image:url('${bg.src}');background-size:cover;background-position:center top;"
          title="${bg.label}"
          role="button"
          aria-label="Background: ${bg.label}">
@@ -1817,13 +1845,6 @@ function initBgPicker() {
       options.classList.add('hidden');
     });
   });
-
-  toggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    options.classList.toggle('hidden');
-  });
-
-  document.addEventListener('click', () => options.classList.add('hidden'));
 
   // Aplicar fondo guardado
   applyBackground(activeBgId);
@@ -1845,61 +1866,5 @@ function initBgPicker() {
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
-  }
-
-  // ── Wire utility buttons that moved to bottom-nav ──────────────────
-  const btnOpenListNav  = document.getElementById('btn-open-list-nav');
-  const bgToggleNav     = document.getElementById('bg-toggle-nav');
-  const btnNightModeNav = document.getElementById('btn-night-mode-nav');
-  const btnThemeNav     = document.getElementById('btn-theme-nav');
-
-  // Song list
-  if (btnOpenListNav) btnOpenListNav.addEventListener('click', () => {
-    openListSheet();
-  });
-
-  // Background picker — reuse the same bg-options dropdown, position it above nav
-  if (bgToggleNav) bgToggleNav.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const options = document.getElementById('bg-options');
-    if (options) options.classList.toggle('hidden');
-  });
-
-  // Sleep / Night mode
-  if (btnNightModeNav) btnNightModeNav.addEventListener('click', () => {
-    const on = applyNightMode();
-    showToast(on ? 'Night mode on' : 'Night mode off');
-    btnNightModeNav.classList.toggle('util-active', on);
-  });
-
-  // Theme picker
-  if (btnThemeNav) btnThemeNav.addEventListener('click', () => {
-    if (modalTheme) { modalTheme.hidden = false; renderThemeOptions(); }
-  });
-
-  // ── Close list sheet by scrolling down inside it ───────────────────
-  const listSheetEl = document.getElementById('main-list-sheet');
-  if (listSheetEl) {
-    let scrollCloseTimer = null;
-    listSheetEl.addEventListener('scroll', () => {
-      clearTimeout(scrollCloseTimer);
-      // Only close if user scrolls all the way back to top and keeps going
-    }, { passive: true });
-
-    // Touch swipe down anywhere on the sheet (not just handle) to close
-    let sheetTouchStartY = null;
-    let sheetTouchStartScrollTop = null;
-    listSheetEl.addEventListener('touchstart', (e) => {
-      sheetTouchStartY = e.touches[0].clientY;
-      sheetTouchStartScrollTop = listSheetEl.scrollTop;
-    }, { passive: true });
-    listSheetEl.addEventListener('touchend', (e) => {
-      if (sheetTouchStartY === null) return;
-      const deltaY = e.changedTouches[0].clientY - sheetTouchStartY;
-      // Close only if swiping down AND already at top of scroll
-      if (deltaY > 60 && sheetTouchStartScrollTop <= 4) closeListSheet();
-      sheetTouchStartY = null;
-      sheetTouchStartScrollTop = null;
-    }, { passive: true });
   }
 })();
