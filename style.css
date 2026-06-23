@@ -1105,15 +1105,9 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
 /* main learning screen */
 .learning-screen { background: #08020f; }
 .learning-topbar {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  z-index: 15;
   padding: calc(14px + var(--safe-top)) clamp(14px, 4vw, 22px) 8px;
   min-height: calc(68px + var(--safe-top));
-  background: linear-gradient(to bottom, rgba(8,2,15,0.72) 0%, transparent 100%);
 }
-/* Ensure screen-player is the positioning parent */
-.screen-player { position: relative; }
 .learning-title-block { min-width: 0; }
 .learning-title-block strong {
   display: block;
@@ -1847,7 +1841,7 @@ body::before {
   inset: 0;
   background-image: url('./images/bg-main.jpg');
   background-size: cover !important;
-  background-position: center top;
+  background-position: center 28%;
   background-repeat: no-repeat !important;
   transition: background-image 0.5s ease;
 }
