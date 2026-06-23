@@ -161,7 +161,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .screen-lyrics { z-index: 70; transform: translateY(110%); }
 .screen-lyrics.active { transform: translateY(0); }
 .screen-admin { z-index: 40; }
-.screen-player { z-index: 20; }
+.screen-player { z-index: 20; padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
 
 .top-bar {
   display: flex;
@@ -1191,11 +1191,7 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
   position: fixed;
   inset: 0;
   z-index: 220;
-  /* bg set by JS via applyBackground(); fallback color */
-  background-color: var(--bg);
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
+  background: var(--bg);
   color: var(--text);
   overflow: hidden;
   opacity: 0;
@@ -1203,20 +1199,26 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
   transition: opacity 0.28s ease, transform 0.28s ease;
   touch-action: manipulation;
 }
-/* Dark overlay so lyrics stay readable over any image */
-.clean-fullscreen::before {
+.clean-fullscreen.active { opacity: 1; transform: scale(1); }
+.fullscreen-art-img {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url('./images/bg-main.jpg');
+  background-size: cover;
+  background-position: center 28%;
+  background-repeat: no-repeat;
+}
+.fullscreen-art-img::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(4, 1, 12, 0.68);
-  z-index: 0;
-  pointer-events: none;
+  background: linear-gradient(180deg, rgba(2,1,10,0.55) 0%, rgba(2,1,10,0.72) 45%, rgba(2,1,10,0.88) 100%);
 }
-.clean-fullscreen > * { position: relative; z-index: 1; }
-.clean-fullscreen.active { opacity: 1; transform: scale(1); }
 .fullscreen-lyrics-flow {
   position: absolute;
   inset: 0;
+  z-index: 1;
   overflow: hidden;
   padding: 48vh clamp(18px, 6vw, 56px) 46vh;
   scroll-behavior: smooth;
@@ -1240,6 +1242,7 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
 .fullscreen-empty {
   position: absolute;
   inset: 0;
+  z-index: 1;
   display: grid;
   place-items: center;
   color: rgba(255,255,255,0.45);
@@ -1252,6 +1255,7 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
   left: max(14px, env(safe-area-inset-left, 0px));
   right: max(14px, env(safe-area-inset-right, 0px));
   bottom: max(18px, env(safe-area-inset-bottom, 0px));
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -1287,6 +1291,10 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
 .fullscreen-progress-track { height: 7px; border-radius: 999px; background: rgba(255,255,255,0.22); overflow: hidden; }
 .fullscreen-progress-fill { width: 0%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent2), #fff); box-shadow: 0 0 16px var(--glow); }
 .fullscreen-mini-controls { display: flex; align-items: center; justify-content: center; gap: clamp(18px, 7vw, 34px); }
+.fullscreen-bg-picker { position: relative; display: flex; justify-content: center; padding-top: 4px; }
+.fullscreen-bg-picker .bg-options {
+  bottom: calc(100% + 10px);
+}
 .fullscreen-mini-controls .ctrl-btn { background: rgba(255,255,255,0.08); color: #fff; }
 .fullscreen-mini-controls .play-btn { background: #fff; color: #000; box-shadow: none; }
 .clean-fullscreen.controls-visible .fullscreen-controls { opacity: 1; transform: translateY(0); pointer-events: auto; }
@@ -1840,14 +1848,14 @@ body::before {
   flex-direction: column !important;
   flex: 1 1 auto !important;
   min-height: 0 !important;
+  overflow: visible !important;
 }
 
-/* ── Album art zone — fixed height so controls always stay visible ── */
+/* ── Album art zone — the centerpiece (≈48% of viewport) ── */
 .album-art-zone {
   position: relative;
-  flex: 0 0 48svh;
-  max-height: 52svh;
-  min-height: 200px;
+  flex: 1 1 auto;
+  min-height: 160px;
   overflow: hidden;
   background: var(--bg2);
 }
@@ -1856,7 +1864,7 @@ body::before {
   inset: 0;
   background-image: url('./images/bg-main.jpg');
   background-size: cover !important;
-  background-position: center top;
+  background-position: center 28%;
   background-repeat: no-repeat !important;
   transition: background-image 0.5s ease;
 }
@@ -1971,11 +1979,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 }
 
 /* ── Progress + Controls ── */
-/* Controls panel — enough bottom padding to clear the 60px nav */
-.bottom-player-panel {
-  flex-shrink: 0;
-  padding: 6px 22px calc(68px + env(safe-area-inset-bottom, 0px)) 22px;
-}
+.bottom-player-panel { flex-shrink: 0; padding: 6px 22px 10px; }
 .progress-track { background: rgba(255,255,255,0.10); height: 5px; }
 .progress-fill {
   background: linear-gradient(90deg, var(--accent), var(--accent2)) !important;
@@ -2057,7 +2061,8 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   backdrop-filter: blur(18px);
   border-top: 1px solid rgba(212,175,55,0.14);
   display: flex;
-  align-items: stretch;
+  align-items: flex-start;
+  justify-content: space-around;
   z-index: 50;
 }
 .bottom-nav-btn {
@@ -2065,33 +2070,22 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 3px;
-  padding-bottom: 2px;
+  gap: 4px;
+  padding-top: 11px;
   background: none;
   border: none;
-  color: rgba(120, 90, 180, 0.55);
+  color: rgba(167,139,250,0.42);
+  font-size: 10.5px;
   font-family: var(--font-body);
+  font-weight: 500;
+  letter-spacing: 0.04em;
   cursor: pointer;
   transition: color 0.2s ease;
-  min-width: 0;
 }
-/* Music tab slightly wider */
-#nav-music { flex: 1.4; }
-.bottom-nav-btn i { font-size: 20px; transition: transform 0.2s ease; }
-.bottom-nav-btn span { font-weight: 700; text-transform: uppercase; font-size: 9px; letter-spacing: 0.05em; white-space: nowrap; }
-.bottom-nav-btn.active { color: var(--gold-soft, #d4a017); }
-.bottom-nav-btn.active i { filter: drop-shadow(0 0 8px rgba(212,160,23,0.6)); transform: translateY(-1px); }
-.bottom-nav-btn.util-on { color: var(--accent2); }
-.bottom-nav-btn.util-on i { filter: drop-shadow(0 0 8px var(--glow)); }
-/* Divider between Music and utility group */
-.bottom-nav-divider {
-  width: 1px;
-  background: rgba(255,255,255,0.09);
-  align-self: stretch;
-  margin: 8px 0;
-  flex-shrink: 0;
-}
+.bottom-nav-btn i { font-size: 22px; transition: transform 0.2s ease; }
+.bottom-nav-btn.active { color: var(--gold-soft); }
+.bottom-nav-btn.active i { filter: drop-shadow(0 0 8px var(--glow-gold)); transform: translateY(-1px); }
+.bottom-nav-btn span { font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.06em; }
 
 .list-sheet { padding-bottom: 8px !important; }
 
@@ -2167,7 +2161,14 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 /* ══════════════════════════════════════════════════════
    UTILITY ROW — list, background, sleep, theme (integrated, not floating)
 ══════════════════════════════════════════════════════ */
-.utility-row { display: none !important; }
+.utility-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 3vw, 16px);
+  padding-top: 12px;
+  flex-shrink: 0;
+}
 .utility-btn {
   width: 40px; height: 40px;
   border-radius: 50%;
@@ -2186,26 +2187,26 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 }
 
 /* ── Background picker — now lives inline in the utility row ── */
-.bg-picker { display: none; }
+.bg-picker { position: relative; display: flex; align-items: center; }
 .bg-options {
-  position: fixed;
-  bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+  position: absolute;
+  bottom: calc(100% + 10px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 8px;
+  gap: 7px;
   width: max-content;
-  max-width: 290px;
-  padding: 12px;
-  border-radius: 20px;
-  background: rgba(6,1,13,0.96);
-  border: 1px solid rgba(212,175,55,0.22);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 -4px 28px rgba(0,0,0,0.70);
-  z-index: 200;
+  max-width: 220px;
+  padding: 10px;
+  border-radius: 18px;
+  background: rgba(8,2,15,0.92);
+  border: 1px solid rgba(212,175,55,0.16);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+  z-index: 100;
 }
 .bg-options.hidden { display: none; }
 .bg-thumb {
