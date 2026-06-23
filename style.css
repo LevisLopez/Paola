@@ -2038,38 +2038,42 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   backdrop-filter: blur(18px);
   border-top: 1px solid rgba(212,175,55,0.14);
   display: flex;
-  align-items: flex-start;
-  justify-content: space-around;
+  align-items: stretch;
   z-index: 50;
-  gap: 0;
 }
-.bottom-nav-btn:nth-child(4) {
-  border-left: 1px solid rgba(255,255,255,0.08);
-}
+/* Music tab gets more weight visually */
+#nav-music { flex: 1.5; }
+/* Utility buttons share remaining space equally */
 .bottom-nav-btn {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding-top: 10px;
+  justify-content: center;
+  gap: 3px;
+  padding-bottom: 2px;
   background: none;
   border: none;
-  color: rgba(167,139,250,0.38);
-  font-size: 9px;
+  color: rgba(120,90,180,0.50);
   font-family: var(--font-body);
-  font-weight: 600;
-  letter-spacing: 0.04em;
   cursor: pointer;
   transition: color 0.2s ease;
   min-width: 0;
 }
-.bottom-nav-btn i { font-size: 19px; transition: transform 0.2s ease; }
-.bottom-nav-btn.active { color: var(--gold-soft); }
-.bottom-nav-btn.active i { filter: drop-shadow(0 0 8px var(--glow-gold)); transform: translateY(-1px); }
-.bottom-nav-btn span { font-weight: 600; text-transform: uppercase; font-size: 9px; letter-spacing: 0.04em; white-space: nowrap; }
-.bottom-nav-btn.util-active { color: var(--accent2); }
-.bottom-nav-btn.util-active i { filter: drop-shadow(0 0 8px var(--glow)); }
+.bottom-nav-btn i { font-size: 20px; transition: transform 0.2s ease; }
+.bottom-nav-btn span { font-weight: 700; text-transform: uppercase; font-size: 9px; letter-spacing: 0.05em; white-space: nowrap; }
+.bottom-nav-btn.active { color: var(--gold-soft, #d4a017); }
+.bottom-nav-btn.active i { filter: drop-shadow(0 0 8px rgba(212,160,23,0.6)); transform: translateY(-1px); }
+.bottom-nav-btn.util-on { color: var(--accent2); }
+.bottom-nav-btn.util-on i { filter: drop-shadow(0 0 8px var(--glow)); }
+/* Thin divider between Music and utility group */
+.bottom-nav-divider {
+  width: 1px;
+  background: rgba(255,255,255,0.09);
+  align-self: stretch;
+  margin: 8px 0;
+  flex-shrink: 0;
+}
 
 .list-sheet { padding-bottom: 8px !important; }
 
@@ -2145,9 +2149,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 /* ══════════════════════════════════════════════════════
    UTILITY ROW — list, background, sleep, theme (integrated, not floating)
 ══════════════════════════════════════════════════════ */
-.utility-row {
-  display: none !important;
-}
+.utility-row { display: none !important; }
 .utility-btn {
   width: 40px; height: 40px;
   border-radius: 50%;
@@ -2165,26 +2167,28 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   background: rgba(212,175,55,0.10);
 }
 
-/* ── Background picker — fixed above bottom nav ── */
-.bg-picker { display: none; } /* original wrapper hidden; button moved to nav */
+/* ── Background picker — now lives inline in the utility row ── */
+/* bg-picker wrapper hidden — toggle button lives in bottom-nav now */
+.bg-picker { display: none; }
+/* bg-options floats fixed just above the bottom nav */
 .bg-options {
   position: fixed;
-  bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(68px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
   width: max-content;
-  max-width: 280px;
+  max-width: 290px;
   padding: 12px;
-  border-radius: 18px;
-  background: rgba(8,2,15,0.94);
+  border-radius: 20px;
+  background: rgba(6,1,13,0.96);
   border: 1px solid rgba(212,175,55,0.20);
-  backdrop-filter: blur(18px);
-  box-shadow: 0 -8px 30px rgba(0,0,0,0.60);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 -6px 30px rgba(0,0,0,0.65);
   z-index: 200;
 }
 .bg-options.hidden { display: none; }
