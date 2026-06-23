@@ -90,7 +90,16 @@
       </div>
     </section>
 
-    <section class="playlist-section main-list-section" aria-label="Song list">
+    <!-- Floating button to open the song list sheet -->
+    <button id="btn-open-list" class="open-list-fab" aria-label="Open song list" aria-expanded="false" aria-controls="main-list-sheet">
+      <i class="ti ti-list" aria-hidden="true"></i>
+    </button>
+
+    <div id="list-sheet-backdrop" class="list-sheet-backdrop" hidden></div>
+
+    <section id="main-list-sheet" class="playlist-section main-list-section list-sheet" aria-label="Song list">
+      <div class="list-sheet-handle" id="list-sheet-handle" aria-hidden="true"></div>
+      <button id="btn-close-list" class="list-sheet-close" aria-label="Close song list"><i class="ti ti-chevron-down"></i></button>
       <div class="list-topline main-list-topline">
         <div class="playlist-tabs" role="tablist" aria-label="Library tabs">
           <button id="tab-all" class="tab-btn active" role="tab">All</button>
