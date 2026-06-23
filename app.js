@@ -426,7 +426,6 @@ function bindTrackRows(container, queueIds, extra = {}) {
       const id = Number(row.dataset.id);
       await Player.playById(id, queueIds);
       renderPlaylist();
-      closeListSheet();
     });
     row.addEventListener('keydown', async (event) => {
       if (event.key !== 'Enter' && event.key !== ' ') return;
@@ -434,7 +433,6 @@ function bindTrackRows(container, queueIds, extra = {}) {
       const id = Number(row.dataset.id);
       await Player.playById(id, queueIds);
       renderPlaylist();
-      closeListSheet();
     });
   });
 
@@ -1137,6 +1135,7 @@ function handleLrcUpload() {
 async function enterCleanFullscreen() {
   if (!Player.currentTrack()) { showToast('Play a song first'); return; }
   if (Lyrics.enabled && !fullscreenLyricsFlow.children.length) renderInlineLyricsList();
+  applyBackground(activeBgId);
   cleanFullscreen.hidden = false;
   requestAnimationFrame(() => cleanFullscreen.classList.add('active'));
   hideFullscreenControls(true);
@@ -1691,9 +1690,11 @@ if (btnFavNow) {
 
 // ── Bottom navigation ────────────────────
 const navMusic     = document.getElementById('nav-music');
+const navFavorites = document.getElementById('nav-favorites');
+const navSettings  = document.getElementById('nav-settings');
 
 function setBottomNav(active) {
-  [navMusic].forEach(b => b && b.classList.remove('active'));
+  [navMusic, navFavorites, navSettings].forEach(b => b && b.classList.remove('active'));
   if (active) active.classList.add('active');
 }
 
@@ -1738,37 +1739,15 @@ if (navMusic) navMusic.addEventListener('click', () => {
   setBottomNav(navMusic);
   openListSheet();
 });
-
-// ── Utility buttons wired after DOM ready ──────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  const btnBgNav       = document.getElementById('btn-bg-nav');
-  const btnSleepNav    = document.getElementById('btn-sleep-nav');
-  const btnThemeNav    = document.getElementById('btn-theme-nav');
-  const btnSettingsNav = document.getElementById('btn-settings-nav');
-  const bgOptions      = document.getElementById('bg-options');
-
-  if (btnBgNav && bgOptions) {
-    btnBgNav.addEventListener('click', (e) => {
-      e.stopPropagation();
-      bgOptions.classList.toggle('hidden');
-    });
-    document.addEventListener('click', () => bgOptions.classList.add('hidden'));
-  }
-
-  if (btnSleepNav) btnSleepNav.addEventListener('click', () => {
-    const on = applyNightMode();
-    showToast(on ? 'Night mode on 🌙' : 'Night mode off');
-    btnSleepNav.classList.toggle('util-on', on);
-  });
-
-  if (btnThemeNav) btnThemeNav.addEventListener('click', () => {
-    const mt = document.getElementById('modal-theme');
-    if (mt) { mt.hidden = false; if (typeof renderThemeOptions === 'function') renderThemeOptions(); }
-  });
-
-  if (btnSettingsNav) btnSettingsNav.addEventListener('click', () => {
-    showMainScreen('admin');
-  });
+if (navFavorites) navFavorites.addEventListener('click', () => {
+  setActiveTab('favorites');
+  showMainScreen('player');
+  setBottomNav(navFavorites);
+  openListSheet();
+});
+if (navSettings) navSettings.addEventListener('click', () => {
+  showMainScreen('admin');
+  setBottomNav(navSettings);
 });
 
 Lyrics.onSync = updateLyricsHighlight;
@@ -1792,64 +1771,33 @@ function applyBackground(id) {
   const bg = BACKGROUNDS.find(b => b.id === id);
   if (!bg) return;
 
-  const commonStyle = `url('${bg.src}')`;
-
-  // Player album art zone
-  const artImg = document.getElementById('album-art-img');
-  if (artImg) {
-    artImg.style.backgroundImage = commonStyle;
-    artImg.style.backgroundSize = 'cover';
-    artImg.style.backgroundPosition = 'center top';
-    artImg.style.backgroundRepeat = 'no-repeat';
-  }
-
-  // Fullscreen karaoke background
-  const fullscreen = document.getElementById('clean-fullscreen');
-  if (fullscreen) {
-    fullscreen.style.backgroundImage = commonStyle;
-    fullscreen.style.backgroundSize = 'cover';
-    fullscreen.style.backgroundPosition = 'center top';
-    fullscreen.style.backgroundRepeat = 'no-repeat';
-  }
+  // Aplicar en album-art-img (reproductor) y fullscreen-art-img (karaoke ampliado)
+  [document.getElementById('album-art-img'), document.getElementById('fullscreen-art-img')]
+    .filter(Boolean)
+    .forEach(artImg => {
+      artImg.style.backgroundImage = `url('${bg.src}')`;
+      artImg.style.backgroundSize = 'cover';
+      artImg.style.backgroundPosition = 'center 28%';
+      artImg.style.backgroundRepeat = 'no-repeat';
+    });
 
   // Limpiar cualquier imagen del body y screens
   [document.body, document.querySelector('.screen-player'), document.querySelector('.learning-screen')]
     .filter(Boolean)
     .forEach(el => {
       el.style.backgroundImage = 'none';
+      el.style.background = '#08020f';
     });
 
-  // Actualizar miniaturas activas
+  // Actualizar miniaturas activas (ambos pickers comparten la clase .bg-thumb)
   document.querySelectorAll('.bg-thumb').forEach(el => {
     el.classList.toggle('active', el.dataset.id === id);
   });
 }
 
-function initBgPicker() {
-  const options = document.getElementById('bg-options');
-  if (!options) return;
-
-  options.innerHTML = BACKGROUNDS.map(bg => `
-    <div class="bg-thumb ${bg.id === activeBgId ? 'active' : ''}"
-         data-id="${bg.id}"
-         style="background-image:url('${bg.src}');background-size:cover;background-position:center top;"
-         title="${bg.label}"
-         role="button"
-         aria-label="Background: ${bg.label}">
-    </div>
-  `).join('');
-
-  options.querySelectorAll('.bg-thumb').forEach(el => {
-    el.addEventListener('click', (e) => {
-      e.stopPropagation();
-      applyBackground(el.dataset.id);
-      options.classList.add('hidden');
-    });
-  });
-
-  // Aplicar fondo guardado
-  applyBackground(activeBgId);
-}
+function initOneBgPicker(toggleId, optionsId) {
+  const toggle  = document.getElementById(toggleId);
+  const options = document.getElementById(optionsId);
   if (!toggle || !options) return;
 
   options.innerHTML = BACKGROUNDS.map(bg => `
@@ -1876,8 +1824,12 @@ function initBgPicker() {
   });
 
   document.addEventListener('click', () => options.classList.add('hidden'));
+}
 
-  // Aplicar fondo guardado
+function initBgPicker() {
+  initOneBgPicker('bg-toggle', 'bg-options');
+  initOneBgPicker('fullscreen-bg-toggle', 'fullscreen-bg-options');
+  // Aplicar fondo guardado a ambos selectores
   applyBackground(activeBgId);
 }
 
