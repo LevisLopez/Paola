@@ -426,6 +426,7 @@ function bindTrackRows(container, queueIds, extra = {}) {
       const id = Number(row.dataset.id);
       await Player.playById(id, queueIds);
       renderPlaylist();
+      closeListSheet();
     });
     row.addEventListener('keydown', async (event) => {
       if (event.key !== 'Enter' && event.key !== ' ') return;
@@ -433,6 +434,7 @@ function bindTrackRows(container, queueIds, extra = {}) {
       const id = Number(row.dataset.id);
       await Player.playById(id, queueIds);
       renderPlaylist();
+      closeListSheet();
     });
   });
 
@@ -1659,7 +1661,7 @@ async function updateAlbumArt(track) {
     const src = artworkForTrack(track);
     zone.style.backgroundImage = `url('${src}')`;
     zone.style.backgroundSize = 'cover';
-    zone.style.backgroundPosition = 'center center';
+    zone.style.backgroundPosition = 'center 28%';
     zone.style.backgroundRepeat = 'no-repeat';
     return;
   }
@@ -1667,7 +1669,7 @@ async function updateAlbumArt(track) {
   const bg = BACKGROUNDS.find(b => b.id === activeBgId) || BACKGROUNDS[0];
   zone.style.backgroundImage = `url('${bg.src}')`;
   zone.style.backgroundSize = 'cover';
-  zone.style.backgroundPosition = 'center center';
+  zone.style.backgroundPosition = 'center 28%';
   zone.style.backgroundRepeat = 'no-repeat';
 }
 
@@ -1728,15 +1730,52 @@ function setBottomNav(active) {
   if (active) active.classList.add('active');
 }
 
+// ── Song list bottom sheet ──
+const listSheet = document.getElementById('main-list-sheet');
+const listSheetBackdrop = document.getElementById('list-sheet-backdrop');
+const btnOpenList = document.getElementById('btn-open-list');
+const btnCloseList = document.getElementById('btn-close-list');
+const listSheetHandle = document.getElementById('list-sheet-handle');
+
+function openListSheet() {
+  if (!listSheet) return;
+  listSheet.classList.add('open');
+  if (listSheetBackdrop) listSheetBackdrop.hidden = false;
+  if (btnOpenList) btnOpenList.setAttribute('aria-expanded', 'true');
+}
+function closeListSheet() {
+  if (!listSheet) return;
+  listSheet.classList.remove('open');
+  if (listSheetBackdrop) listSheetBackdrop.hidden = true;
+  if (btnOpenList) btnOpenList.setAttribute('aria-expanded', 'false');
+}
+if (btnOpenList) btnOpenList.addEventListener('click', openListSheet);
+if (btnCloseList) btnCloseList.addEventListener('click', closeListSheet);
+if (listSheetBackdrop) listSheetBackdrop.addEventListener('click', closeListSheet);
+
+// Swipe-down on the handle to close (simple touch drag)
+if (listSheetHandle) {
+  let dragStartY = null;
+  listSheetHandle.addEventListener('touchstart', (e) => { dragStartY = e.touches[0].clientY; }, { passive: true });
+  listSheetHandle.addEventListener('touchend', (e) => {
+    if (dragStartY === null) return;
+    const deltaY = e.changedTouches[0].clientY - dragStartY;
+    if (deltaY > 40) closeListSheet();
+    dragStartY = null;
+  }, { passive: true });
+}
+
 if (navMusic) navMusic.addEventListener('click', () => {
   setActiveTab('all');
   showMainScreen('player');
   setBottomNav(navMusic);
+  openListSheet();
 });
 if (navFavorites) navFavorites.addEventListener('click', () => {
   setActiveTab('favorites');
   showMainScreen('player');
   setBottomNav(navFavorites);
+  openListSheet();
 });
 if (navSettings) navSettings.addEventListener('click', () => {
   showMainScreen('admin');
