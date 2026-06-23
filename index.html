@@ -153,6 +153,7 @@
 
   <!-- TRUE CLEAN FULLSCREEN LYRICS -->
   <section id="clean-fullscreen" class="clean-fullscreen" hidden aria-label="Full screen lyrics">
+    <div id="fullscreen-art-img" class="fullscreen-art-img" aria-hidden="true"></div>
     <div id="fullscreen-lyrics-flow" class="fullscreen-lyrics-flow" aria-live="polite"></div>
     <div id="fullscreen-empty" class="fullscreen-empty" hidden>Play a song with synced lyrics.</div>
     <div id="fullscreen-controls" class="fullscreen-controls" hidden>
@@ -168,6 +169,10 @@
         <button id="fullscreen-prev" class="ctrl-btn" aria-label="Previous"><i class="ti ti-player-skip-back"></i></button>
         <button id="fullscreen-play" class="play-btn" aria-label="Play or pause"><i class="ti ti-player-play" id="fullscreen-play-icon"></i></button>
         <button id="fullscreen-next" class="ctrl-btn" aria-label="Next"><i class="ti ti-player-skip-forward"></i></button>
+      </div>
+      <div class="fullscreen-bg-picker" id="fullscreen-bg-picker">
+        <button class="utility-btn" id="fullscreen-bg-toggle" aria-label="Change background"><i class="ti ti-photo"></i></button>
+        <div class="bg-options hidden" id="fullscreen-bg-options"></div>
       </div>
     </div>
   </section>
@@ -362,20 +367,11 @@
       <i class="ti ti-music"></i>
       <span>Music</span>
     </button>
-    <div class="bottom-nav-divider" aria-hidden="true"></div>
-    <button class="bottom-nav-btn" id="btn-bg-nav" aria-label="Change background">
-      <i class="ti ti-photo"></i>
-      <span>BG</span>
+    <button class="bottom-nav-btn" id="nav-favorites" aria-label="Favorites">
+      <i class="ti ti-heart"></i>
+      <span>Favorites</span>
     </button>
-    <button class="bottom-nav-btn" id="btn-sleep-nav" aria-label="Sleep timer">
-      <i class="ti ti-moon-stars"></i>
-      <span>Sleep</span>
-    </button>
-    <button class="bottom-nav-btn" id="btn-theme-nav" aria-label="Color themes">
-      <i class="ti ti-palette"></i>
-      <span>Theme</span>
-    </button>
-    <button class="bottom-nav-btn" id="btn-settings-nav" aria-label="Settings">
+    <button class="bottom-nav-btn" id="nav-settings" aria-label="Settings">
       <i class="ti ti-settings"></i>
       <span>Settings</span>
     </button>
