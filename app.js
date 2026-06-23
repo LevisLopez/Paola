@@ -1846,4 +1846,60 @@ function initBgPicker() {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
   }
+
+  // ── Wire utility buttons that moved to bottom-nav ──────────────────
+  const btnOpenListNav  = document.getElementById('btn-open-list-nav');
+  const bgToggleNav     = document.getElementById('bg-toggle-nav');
+  const btnNightModeNav = document.getElementById('btn-night-mode-nav');
+  const btnThemeNav     = document.getElementById('btn-theme-nav');
+
+  // Song list
+  if (btnOpenListNav) btnOpenListNav.addEventListener('click', () => {
+    openListSheet();
+  });
+
+  // Background picker — reuse the same bg-options dropdown, position it above nav
+  if (bgToggleNav) bgToggleNav.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const options = document.getElementById('bg-options');
+    if (options) options.classList.toggle('hidden');
+  });
+
+  // Sleep / Night mode
+  if (btnNightModeNav) btnNightModeNav.addEventListener('click', () => {
+    const on = applyNightMode();
+    showToast(on ? 'Night mode on' : 'Night mode off');
+    btnNightModeNav.classList.toggle('util-active', on);
+  });
+
+  // Theme picker
+  if (btnThemeNav) btnThemeNav.addEventListener('click', () => {
+    if (modalTheme) { modalTheme.hidden = false; renderThemeOptions(); }
+  });
+
+  // ── Close list sheet by scrolling down inside it ───────────────────
+  const listSheetEl = document.getElementById('main-list-sheet');
+  if (listSheetEl) {
+    let scrollCloseTimer = null;
+    listSheetEl.addEventListener('scroll', () => {
+      clearTimeout(scrollCloseTimer);
+      // Only close if user scrolls all the way back to top and keeps going
+    }, { passive: true });
+
+    // Touch swipe down anywhere on the sheet (not just handle) to close
+    let sheetTouchStartY = null;
+    let sheetTouchStartScrollTop = null;
+    listSheetEl.addEventListener('touchstart', (e) => {
+      sheetTouchStartY = e.touches[0].clientY;
+      sheetTouchStartScrollTop = listSheetEl.scrollTop;
+    }, { passive: true });
+    listSheetEl.addEventListener('touchend', (e) => {
+      if (sheetTouchStartY === null) return;
+      const deltaY = e.changedTouches[0].clientY - sheetTouchStartY;
+      // Close only if swiping down AND already at top of scroll
+      if (deltaY > 60 && sheetTouchStartScrollTop <= 4) closeListSheet();
+      sheetTouchStartY = null;
+      sheetTouchStartScrollTop = null;
+    }, { passive: true });
+  }
 })();
