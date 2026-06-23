@@ -1191,7 +1191,11 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
   position: fixed;
   inset: 0;
   z-index: 220;
-  background: var(--bg);
+  /* bg set by JS via applyBackground(); fallback color */
+  background-color: var(--bg);
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
   color: var(--text);
   overflow: hidden;
   opacity: 0;
@@ -1199,6 +1203,16 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
   transition: opacity 0.28s ease, transform 0.28s ease;
   touch-action: manipulation;
 }
+/* Dark overlay so lyrics stay readable over any image */
+.clean-fullscreen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 1, 12, 0.68);
+  z-index: 0;
+  pointer-events: none;
+}
+.clean-fullscreen > * { position: relative; z-index: 1; }
 .clean-fullscreen.active { opacity: 1; transform: scale(1); }
 .fullscreen-lyrics-flow {
   position: absolute;
@@ -1828,11 +1842,12 @@ body::before {
   min-height: 0 !important;
 }
 
-/* ── Album art zone — the centerpiece (≈48% of viewport) ── */
+/* ── Album art zone — fixed height so controls always stay visible ── */
 .album-art-zone {
   position: relative;
-  flex: 1 1 auto;
-  min-height: 220px;
+  flex: 0 0 48svh;
+  max-height: 52svh;
+  min-height: 200px;
   overflow: hidden;
   background: var(--bg2);
 }
@@ -1841,7 +1856,7 @@ body::before {
   inset: 0;
   background-image: url('./images/bg-main.jpg');
   background-size: cover !important;
-  background-position: center 28%;
+  background-position: center top;
   background-repeat: no-repeat !important;
   transition: background-image 0.5s ease;
 }
@@ -1956,7 +1971,11 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 }
 
 /* ── Progress + Controls ── */
-.bottom-player-panel { flex-shrink: 0; padding: 6px 22px 10px; }
+/* Controls panel — enough bottom padding to clear the 60px nav */
+.bottom-player-panel {
+  flex-shrink: 0;
+  padding: 6px 22px calc(68px + env(safe-area-inset-bottom, 0px)) 22px;
+}
 .progress-track { background: rgba(255,255,255,0.10); height: 5px; }
 .progress-fill {
   background: linear-gradient(90deg, var(--accent), var(--accent2)) !important;
@@ -2041,9 +2060,6 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   align-items: stretch;
   z-index: 50;
 }
-/* Music tab gets more weight visually */
-#nav-music { flex: 1.5; }
-/* Utility buttons share remaining space equally */
 .bottom-nav-btn {
   flex: 1;
   display: flex;
@@ -2054,19 +2070,21 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   padding-bottom: 2px;
   background: none;
   border: none;
-  color: rgba(120,90,180,0.50);
+  color: rgba(120, 90, 180, 0.55);
   font-family: var(--font-body);
   cursor: pointer;
   transition: color 0.2s ease;
   min-width: 0;
 }
+/* Music tab slightly wider */
+#nav-music { flex: 1.4; }
 .bottom-nav-btn i { font-size: 20px; transition: transform 0.2s ease; }
 .bottom-nav-btn span { font-weight: 700; text-transform: uppercase; font-size: 9px; letter-spacing: 0.05em; white-space: nowrap; }
 .bottom-nav-btn.active { color: var(--gold-soft, #d4a017); }
 .bottom-nav-btn.active i { filter: drop-shadow(0 0 8px rgba(212,160,23,0.6)); transform: translateY(-1px); }
 .bottom-nav-btn.util-on { color: var(--accent2); }
 .bottom-nav-btn.util-on i { filter: drop-shadow(0 0 8px var(--glow)); }
-/* Thin divider between Music and utility group */
+/* Divider between Music and utility group */
 .bottom-nav-divider {
   width: 1px;
   background: rgba(255,255,255,0.09);
@@ -2168,9 +2186,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 }
 
 /* ── Background picker — now lives inline in the utility row ── */
-/* bg-picker wrapper hidden — toggle button lives in bottom-nav now */
 .bg-picker { display: none; }
-/* bg-options floats fixed just above the bottom nav */
 .bg-options {
   position: fixed;
   bottom: calc(68px + env(safe-area-inset-bottom, 0px));
@@ -2186,9 +2202,9 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   padding: 12px;
   border-radius: 20px;
   background: rgba(6,1,13,0.96);
-  border: 1px solid rgba(212,175,55,0.20);
+  border: 1px solid rgba(212,175,55,0.22);
   backdrop-filter: blur(20px);
-  box-shadow: 0 -6px 30px rgba(0,0,0,0.65);
+  box-shadow: 0 -4px 28px rgba(0,0,0,0.70);
   z-index: 200;
 }
 .bg-options.hidden { display: none; }
