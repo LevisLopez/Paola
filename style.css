@@ -274,10 +274,6 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   background: radial-gradient(circle, var(--glow), transparent 68%);
   pointer-events: none;
 }
-
-
-
-
 .orb-artwork {
   width: 88px;
   height: 88px;
@@ -291,23 +287,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
     linear-gradient(135deg, var(--accent), var(--accent3));
   box-shadow: 0 18px 44px var(--glow);
   position: relative;
-  overflow: hidden; /* <--- ASEGÚRATE DE QUE ESTA LÍNEA ESTÉ AQUÍ */
 }
-
-/* Y justo abajo pegas esto: */
-.orb-artwork img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; 
-  object-position: center; 
-  display: block;
-}
-
-
-
-
-
-
 .orb-note {
   width: 62px;
   height: 62px;
@@ -319,13 +299,6 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   color: #fff;
   font-size: 35px;
 }
-
-
-
-
-
-
-
 body.playing .orb-artwork { animation: pulse-art 2.2s ease-in-out infinite; }
 @keyframes pulse-art { 0%,100% { transform: scale(1); } 50% { transform: scale(1.035); } }
 
@@ -1233,7 +1206,7 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
   z-index: 0;
   background-image: url('./images/bg-main.jpg');
   background-size: cover;
-  background-position: center 15%;
+  background-position: center 28%;
   background-repeat: no-repeat;
 }
 .fullscreen-art-img::after {
@@ -1849,11 +1822,11 @@ body::before {
 .house-sag { color: var(--accent2); font-size: 0.82em; margin-left: 0.15em; }
 .house-sub {
   font-family: var(--font-head);
-  font-size: clamp(6.5px, 1.7vw, 8.5px);
+  font-size: clamp(9px, 2.6vw, 12px);
   font-weight: 500;
   color: var(--text3);
-  letter-spacing: 0.26em;
-  margin-top: 2px;
+  letter-spacing: 0.2em;
+  margin-top: 3px;
 }
 
 .minimal-topbar {
@@ -1898,15 +1871,15 @@ body::before {
   flex: 1 1 auto;
   min-height: 160px;
   overflow: hidden;
-  background: #000;
+  background: var(--bg2);
 }
 .album-art-img {
   position: absolute;
   inset: 0;
   background-image: url('./images/bg-main.jpg');
-  background-size: cover;
-  background-position: center 15%;
-  background-repeat: no-repeat;
+  background-size: cover !important;
+  background-position: center 28%;
+  background-repeat: no-repeat !important;
   transition: background-image 0.5s ease;
 }
 .album-art-img::after {
@@ -1925,7 +1898,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 62%;
-  background: linear-gradient(to top, var(--bg) 0%, rgba(8,2,15,0.15) 45%, transparent 100%);
+  background: linear-gradient(to top, var(--bg) 0%, rgba(8,2,15,0.55) 45%, transparent 100%);
   pointer-events: none;
   z-index: 1;
 }
@@ -1935,7 +1908,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 30%;
-  background: linear-gradient(to bottom, rgba(8,2,15,0.10), transparent);
+  background: linear-gradient(to bottom, rgba(8,2,15,0.45), transparent);
   pointer-events: none;
   z-index: 1;
 }
@@ -2020,7 +1993,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 }
 
 /* ── Progress + Controls ── */
-.bottom-player-panel { flex-shrink: 0; padding: 6px 22px calc(68px + env(safe-area-inset-bottom, 0px)); }
+.bottom-player-panel { flex-shrink: 0; padding: 6px 22px 10px; }
 .progress-track { background: rgba(255,255,255,0.10); height: 5px; }
 .progress-fill {
   background: linear-gradient(90deg, var(--accent), var(--accent2)) !important;
