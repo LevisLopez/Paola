@@ -1925,7 +1925,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 62%;
-  background: linear-gradient(to top, var(--bg) 0%, rgba(8,2,15,0.55) 45%, transparent 100%);
+  background: linear-gradient(to top, var(--bg) 0%, rgba(8,2,15,0.25) 45%, transparent 100%);
   pointer-events: none;
   z-index: 1;
 }
@@ -1935,7 +1935,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 30%;
-  background: linear-gradient(to bottom, rgba(8,2,15,0.45), transparent);
+  background: linear-gradient(to bottom, rgba(8,2,15,0.20), transparent);
   pointer-events: none;
   z-index: 1;
 }
