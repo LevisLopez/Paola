@@ -1898,7 +1898,7 @@ body::before {
   flex: 1 1 auto;
   min-height: 160px;
   overflow: hidden;
-  background: var(--bg2);
+  background: #000;
 }
 .album-art-img {
   position: absolute;
