@@ -1232,9 +1232,9 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
   inset: 0;
   z-index: 0;
   background-image: url('./images/bg-main.jpg');
-  background-size: 100% auto;
-  background-position: center top;
-  background-color: #000;
+background-size: contain;
+background-position: center top;
+background-color: #000;
   background-repeat: no-repeat;
 }
 .fullscreen-art-img::after {
@@ -1906,8 +1906,9 @@ body::before {
   position: absolute;
   inset: 0;
   background-image: url('./images/bg-main.jpg');
-  background-size: cover !important;
-  background-position: center 28%;
+background-size: contain;
+background-position: center top;
+background-color: #000;
   background-repeat: no-repeat !important;
   transition: background-image 0.5s ease;
 }
