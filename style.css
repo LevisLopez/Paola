@@ -1232,9 +1232,8 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
   inset: 0;
   z-index: 0;
   background-image: url('./images/bg-main.jpg');
-background-size: contain;
-background-position: center top;
-background-color: #000;
+  background-size: cover;
+  background-position: center 15%;
   background-repeat: no-repeat;
 }
 .fullscreen-art-img::after {
@@ -1896,8 +1895,7 @@ body::before {
 /* ── Album art zone — the centerpiece (≈48% of viewport) ── */
 .album-art-zone {
   position: relative;
-  flex: 0 0 45svh;
-  max-height: 50svh;
+  flex: 1 1 auto;
   min-height: 160px;
   overflow: hidden;
   background: #000;
@@ -1906,10 +1904,9 @@ body::before {
   position: absolute;
   inset: 0;
   background-image: url('./images/bg-main.jpg');
-background-size: contain;
-background-position: center top;
-background-color: #000;
-  background-repeat: no-repeat !important;
+  background-size: cover;
+  background-position: center 15%;
+  background-repeat: no-repeat;
   transition: background-image 0.5s ease;
 }
 .album-art-img::after {
@@ -2023,7 +2020,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 }
 
 /* ── Progress + Controls ── */
-.bottom-player-panel { flex-shrink: 0; padding: 6px 22px 10px; }
+.bottom-player-panel { flex-shrink: 0; padding: 6px 22px calc(68px + env(safe-area-inset-bottom, 0px)); }
 .progress-track { background: rgba(255,255,255,0.10); height: 5px; }
 .progress-fill {
   background: linear-gradient(90deg, var(--accent), var(--accent2)) !important;
