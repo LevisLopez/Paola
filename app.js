@@ -1411,7 +1411,13 @@ btnTheme.addEventListener('click', () => { modalTheme.hidden = false; renderThem
 if (btnAdminTheme) btnAdminTheme.addEventListener('click', () => { modalTheme.hidden = false; renderThemeOptions(); });
 themeClose.addEventListener('click', () => { modalTheme.hidden = true; });
 modalTheme.addEventListener('click', (event) => { if (event.target === modalTheme) modalTheme.hidden = true; });
-if (btnNightMode) btnNightMode.addEventListener('click', () => { const on = applyNightMode(); showToast(on ? 'Night mode on' : 'Night mode off'); });
+if (btnNightMode) btnNightMode.addEventListener('click', () => {
+  if (typeof SleepTimer !== 'undefined' && SleepTimer.active) {
+    SleepTimer.cancel(true);
+  } else if (modalSleep) {
+    modalSleep.hidden = false;
+  }
+});
 if (btnAdminNight) btnAdminNight.addEventListener('click', () => { const on = applyNightMode(); showToast(on ? 'Night mode on' : 'Night mode off'); });
 
 tabAll.addEventListener('click', () => setActiveTab('all'));
@@ -1701,7 +1707,6 @@ function setBottomNav(active) {
 // ── Song list bottom sheet ──
 const listSheet = document.getElementById('main-list-sheet');
 const listSheetBackdrop = document.getElementById('list-sheet-backdrop');
-const btnOpenList = document.getElementById('btn-open-list');
 const btnCloseList = document.getElementById('btn-close-list');
 const listSheetHandle = document.getElementById('list-sheet-handle');
 
@@ -1709,15 +1714,12 @@ function openListSheet() {
   if (!listSheet) return;
   listSheet.classList.add('open');
   if (listSheetBackdrop) listSheetBackdrop.hidden = false;
-  if (btnOpenList) btnOpenList.setAttribute('aria-expanded', 'true');
 }
 function closeListSheet() {
   if (!listSheet) return;
   listSheet.classList.remove('open');
   if (listSheetBackdrop) listSheetBackdrop.hidden = true;
-  if (btnOpenList) btnOpenList.setAttribute('aria-expanded', 'false');
 }
-if (btnOpenList) btnOpenList.addEventListener('click', openListSheet);
 if (btnCloseList) btnCloseList.addEventListener('click', closeListSheet);
 if (listSheetBackdrop) listSheetBackdrop.addEventListener('click', closeListSheet);
 
