@@ -1292,6 +1292,20 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
 .fullscreen-progress-fill { width: 0%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent2), #fff); box-shadow: 0 0 16px var(--glow); }
 .fullscreen-mini-controls { display: flex; align-items: center; justify-content: center; gap: clamp(18px, 7vw, 34px); }
 .fullscreen-bg-picker { position: relative; display: flex; justify-content: center; padding-top: 4px; }
+.fullscreen-bg-picker .utility-btn,
+#fullscreen-bg-toggle {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(212,175,55,0.16);
+  background: rgba(255,255,255,0.045);
+  color: var(--text2);
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+#fullscreen-bg-toggle:active { transform: scale(0.92); }
+#fullscreen-bg-toggle:hover { color: var(--gold-soft); background: rgba(212,175,55,0.10); }
 .fullscreen-bg-picker .bg-options {
   bottom: calc(100% + 10px);
 }
@@ -2061,31 +2075,33 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   backdrop-filter: blur(18px);
   border-top: 1px solid rgba(212,175,55,0.14);
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-around;
   z-index: 50;
 }
 .bottom-nav-btn {
   flex: 1;
+  min-width: 0;
+  height: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding-top: 11px;
+  justify-content: center;
   background: none;
   border: none;
   color: rgba(167,139,250,0.42);
-  font-size: 10.5px;
-  font-family: var(--font-body);
-  font-weight: 500;
-  letter-spacing: 0.04em;
   cursor: pointer;
   transition: color 0.2s ease;
 }
-.bottom-nav-btn i { font-size: 22px; transition: transform 0.2s ease; }
+.bottom-nav-btn i { font-size: 23px; transition: transform 0.2s ease; }
 .bottom-nav-btn.active { color: var(--gold-soft); }
 .bottom-nav-btn.active i { filter: drop-shadow(0 0 8px var(--glow-gold)); transform: translateY(-1px); }
-.bottom-nav-btn span { font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.06em; }
+.bottom-nav-btn span {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: clamp(7px, 2.1vw, 9px);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
 
 .list-sheet { padding-bottom: 8px !important; }
 
@@ -2159,38 +2175,33 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 }
 
 /* ══════════════════════════════════════════════════════
-   UTILITY ROW — list, background, sleep, theme (integrated, not floating)
+   BACKGROUND PICKER — now lives inside the bottom nav as a regular item
 ══════════════════════════════════════════════════════ */
-.utility-row {
+.bg-picker {
+  position: relative;
+  padding: 0 !important;
+  background: none !important;
+  border: none !important;
+}
+.bg-picker-toggle {
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(10px, 3vw, 16px);
-  padding-top: 12px;
-  flex-shrink: 0;
-}
-.utility-btn {
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  border: 1px solid rgba(212,175,55,0.16);
-  background: rgba(255,255,255,0.045);
-  color: var(--text2);
-  font-size: 18px;
-  display: flex; align-items: center; justify-content: center;
+  background: none;
+  border: none;
+  color: rgba(167,139,250,0.42);
   cursor: pointer;
-  transition: color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+  transition: color 0.2s ease;
 }
-.utility-btn:active { transform: scale(0.92); }
-.utility-btn:hover, .utility-btn.lyrics-on, .utility-btn.sleep-on {
-  color: var(--gold-soft);
-  background: rgba(212,175,55,0.10);
-}
+.bg-picker-toggle i { font-size: 23px; }
+.bg-picker.open .bg-picker-toggle { color: var(--gold-soft); }
+.bg-picker.open .bg-picker-toggle i { filter: drop-shadow(0 0 8px var(--glow-gold)); }
 
-/* ── Background picker — now lives inline in the utility row ── */
-.bg-picker { position: relative; display: flex; align-items: center; }
 .bg-options {
   position: absolute;
-  bottom: calc(100% + 10px);
+  bottom: calc(100% + 14px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
