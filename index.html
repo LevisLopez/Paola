@@ -82,16 +82,6 @@
           <button id="btn-next" class="ctrl-btn" aria-label="Next"><i class="ti ti-player-skip-forward"></i></button>
           <button id="btn-repeat" class="ctrl-btn" aria-label="Repeat"><i class="ti ti-repeat"></i></button>
         </div>
-
-        <div class="utility-row" aria-label="More player options">
-          <button id="btn-open-list" class="utility-btn" aria-label="Open song list" aria-expanded="false" aria-controls="main-list-sheet"><i class="ti ti-list" aria-hidden="true"></i></button>
-          <div class="bg-picker" id="bg-picker">
-            <button class="utility-btn bg-picker-toggle" id="bg-toggle" aria-label="Change background"><i class="ti ti-photo"></i></button>
-            <div class="bg-options hidden" id="bg-options"></div>
-          </div>
-          <button id="btn-night-mode" class="utility-btn" aria-label="Sleep timer" title="Sleep timer"><i class="ti ti-moon-stars"></i></button>
-          <button id="btn-theme" class="utility-btn" aria-label="Color themes" title="Color themes"><i class="ti ti-palette"></i></button>
-        </div>
       </div>
     </section>
 
@@ -365,15 +355,30 @@
   <nav class="bottom-nav" aria-label="Main navigation">
     <button class="bottom-nav-btn active" id="nav-music" aria-label="Music">
       <i class="ti ti-music"></i>
-      <span>Music</span>
+      <span class="sr-only">Music</span>
     </button>
     <button class="bottom-nav-btn" id="nav-favorites" aria-label="Favorites">
       <i class="ti ti-heart"></i>
-      <span>Favorites</span>
+      <span class="sr-only">Favorites</span>
     </button>
     <button class="bottom-nav-btn" id="nav-settings" aria-label="Settings">
       <i class="ti ti-settings"></i>
-      <span>Settings</span>
+      <span class="sr-only">Settings</span>
+    </button>
+    <div class="bottom-nav-btn bg-picker" id="bg-picker">
+      <button class="bg-picker-toggle" id="bg-toggle" aria-label="Change background">
+        <i class="ti ti-photo"></i>
+        <span class="sr-only">Background</span>
+      </button>
+      <div class="bg-options hidden" id="bg-options"></div>
+    </div>
+    <button class="bottom-nav-btn" id="btn-night-mode" aria-label="Sleep timer">
+      <i class="ti ti-moon-stars"></i>
+      <span class="sr-only">Timer</span>
+    </button>
+    <button class="bottom-nav-btn" id="btn-theme" aria-label="Color themes">
+      <i class="ti ti-palette"></i>
+      <span class="sr-only">Theme</span>
     </button>
   </nav>
 </main>
