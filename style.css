@@ -1232,8 +1232,9 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
   inset: 0;
   z-index: 0;
   background-image: url('./images/bg-main.jpg');
-  background-size: cover;
-  background-position: center 28%;
+  background-size: 100% auto;
+  background-position: center top;
+  background-color: #000;
   background-repeat: no-repeat;
 }
 .fullscreen-art-img::after {
@@ -1895,7 +1896,8 @@ body::before {
 /* ── Album art zone — the centerpiece (≈48% of viewport) ── */
 .album-art-zone {
   position: relative;
-  flex: 1 1 auto;
+  flex: 0 0 45svh;
+  max-height: 50svh;
   min-height: 160px;
   overflow: hidden;
   background: #000;
