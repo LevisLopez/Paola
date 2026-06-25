@@ -20,8 +20,8 @@
     <!-- Contenedor Maestro de la Aplicación -->
     <div class="player-layout">
         
-        <!-- SIDEBAR: El Trono de Hierro (Navegación Izquierda) -->
-        <aside class="sidebar">
+        <!-- SIDEBAR: El Trono de Hierro (Oculto en móvil) -->
+        <aside class="sidebar" id="sidebar-menu">
             <div class="logo">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                 <span>Aurora Player</span>
@@ -30,32 +30,31 @@
             <nav class="menu-section">
                 <h3>Explorar</h3>
                 <ul>
-                    <li><a href="#" class="active" onclick="switchTab('inicio')"><i class="fa-solid fa-house"></i> Inicio</a></li>
-                    <li><a href="#" onclick="switchTab('buscar')"><i class="fa-solid fa-magnifying-glass"></i> Buscar Canciones</a></li>
-                    <li><a href="#" onclick="switchTab('letras')"><i class="fa-solid fa-music"></i> Letras Sincronizadas</a></li>
+                    <li><a href="#" class="nav-link active" onclick="switchTab('inicio')"><i class="fa-solid fa-house"></i> Inicio</a></li>
+                    <li><a href="#" class="nav-link" onclick="switchTab('buscar')"><i class="fa-solid fa-magnifying-glass"></i> Buscar Canciones</a></li>
+                    <li><a href="#" class="nav-link" onclick="switchTab('letras')"><i class="fa-solid fa-music"></i> Letras Sincronizadas</a></li>
                 </ul>
             </nav>
 
             <nav class="menu-section">
                 <h3>Tu Biblioteca</h3>
                 <ul>
-                    <li><a href="#" onclick="switchTab('favoritos')"><i class="fa-solid fa-dragon"></i> Salón de Rostros</a></li>
-                    <li><a href="#" onclick="switchTab('playlists')"><i class="fa-solid fa-scroll"></i> Crónicas (Playlists)</a></li>
-                    <li><a href="#" onclick="switchTab('admin')"><i class="fa-solid fa-gear"></i> Administrar Archivos</a></li>
+                    <li><a href="#" class="nav-link" onclick="switchTab('favoritos')"><i class="fa-solid fa-dragon"></i> Salón de Rostros</a></li>
+                    <li><a href="#" class="nav-link" onclick="switchTab('playlists')"><i class="fa-solid fa-scroll"></i> Crónicas (Playlists)</a></li>
+                    <li><a href="#" class="nav-link" onclick="switchTab('admin')"><i class="fa-solid fa-gear"></i> Administrar Archivos</a></li>
                 </ul>
             </nav>
 
-            <!-- Miniatura de Canción en Sidebar (Opcional) -->
             <div class="sidebar-footer-card">
                 <i class="fa-solid fa-jedi"></i>
                 <span>Regido por Júpiter</span>
             </div>
         </aside>
 
-        <!-- CONTENIDO PRINCIPAL: El Mapa de Poniente (Centro) -->
+        <!-- CONTENIDO PRINCIPAL: El Mapa de Poniente -->
         <main class="main-content">
             
-            <!-- Barra Superior (Buscador y Perfil) -->
+            <!-- Barra Superior Adaptativa -->
             <header class="top-bar">
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -79,7 +78,6 @@
 
                 <h2 class="section-title">Biblioteca de Pistas</h2>
                 <div class="songs-grid" id="songs-container">
-                    <!-- Las tarjetas se cargarán dinámicamente con JS, aquí tienes el diseño base: -->
                     <div class="song-card" onclick="playTrackDemo('Constelación Sagitario', 'El Centauro de Fuego')">
                         <div class="card-img-wrapper">
                             <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400" alt="Cover">
@@ -124,7 +122,7 @@
                 </div>
             </section>
 
-            <!-- PESTAÑA: ADMINISTRACIÓN / INDEXEDDB -->
+            <!-- PESTAÑA: ADMINISTRACIÓN -->
             <section id="tab-admin" class="tab-content">
                 <h2 class="section-title">Cámara de Archivos (IndexedDB)</h2>
                 <div class="admin-panel-card">
@@ -136,13 +134,19 @@
                     </div>
                 </div>
             </section>
-
         </main>
 
-        <!-- PLAYBACK BAR: El Fuego Valyrio (Barra Inferior Fija) -->
+        <!-- NAV BAR INFERIOR (Solo visible en móviles, estilo Spotify App) -->
+        <nav class="mobile-nav">
+            <a href="#" class="mobile-link active" onclick="switchTab('inicio')"><i class="fa-solid fa-house"></i><span>Inicio</span></a>
+            <a href="#" class="mobile-link" onclick="switchTab('buscar')"><i class="fa-solid fa-magnifying-glass"></i><span>Buscar</span></a>
+            <a href="#" class="mobile-link" onclick="switchTab('letras')"><i class="fa-solid fa-music"></i><span>Letras</span></a>
+            <a href="#" class="mobile-link" onclick="switchTab('admin')"><i class="fa-solid fa-gear"></i><span>Admin</span></a>
+        </nav>
+
+        <!-- PLAYBACK BAR (Barra Multimedia Fija) -->
         <footer class="playback-bar">
-            
-            <!-- Izquierda: Información de la canción actual -->
+            <!-- Izquierda: Track Info -->
             <div class="track-display">
                 <img id="player-cover" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400" alt="Cover Actual">
                 <div class="track-details">
@@ -152,14 +156,14 @@
                 <button class="fav-btn"><i class="fa-regular fa-heart"></i></button>
             </div>
 
-            <!-- Centro: Controles de reproducción principales -->
+            <!-- Centro: Controles -->
             <div class="player-core">
                 <div class="media-buttons">
-                    <button class="btn-icon"><i class="fa-solid fa-shuffle"></i></button>
+                    <button class="btn-icon hide-mobile"><i class="fa-solid fa-shuffle"></i></button>
                     <button class="btn-icon"><i class="fa-solid fa-backward-step"></i></button>
                     <button class="btn-icon btn-main-play" id="btn-play-main"><i class="fa-solid fa-play"></i></button>
                     <button class="btn-icon"><i class="fa-solid fa-forward-step"></i></button>
-                    <button class="btn-icon" id="btn-sleep" title="Temporizador de sueño"><i class="fa-solid fa-moon"></i></button>
+                    <button class="btn-icon hide-mobile" id="btn-sleep"><i class="fa-solid fa-moon"></i></button>
                 </div>
                 <div class="timeline-container">
                     <span id="time-current">0:00</span>
@@ -171,8 +175,8 @@
                 </div>
             </div>
 
-            <!-- Derecha: Controles de volumen y utilidades -->
-            <div class="utility-controls">
+            <!-- Derecha: Utilidades (Ocultas en celular para ahorrar espacio) -->
+            <div class="utility-controls hide-mobile">
                 <i class="fa-solid fa-list-ul"></i>
                 <div class="volume-container">
                     <i class="fa-solid fa-volume-high"></i>
@@ -182,21 +186,23 @@
                     </div>
                 </div>
             </div>
-
         </footer>
 
     </div>
 
-    <!-- Script de control básico de pestañas y efectos -->
     <script>
         function switchTab(tabId) {
+            // Desactivar todas las pestañas
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active'));
+            // Desactivar todos los enlaces del menú tradicional y móvil
+            document.querySelectorAll('.nav-link, .mobile-link').forEach(link => link.classList.remove('active'));
             
             const selectedTab = document.getElementById('tab-' + tabId);
             if(selectedTab) selectedTab.classList.add('active');
             
-            event.currentTarget.classList.add('active');
+            // Marcar activo el botón correspondiente en el que se hizo clic
+            const clickedElements = document.querySelectorAll(`[onclick="switchTab('${tabId}')"]`);
+            clickedElements.forEach(el => el.classList.add('active'));
         }
 
         function playTrackDemo(title, artist) {
@@ -205,7 +211,6 @@
             document.getElementById('lyrics-title').textContent = title;
             document.getElementById('lyrics-artist').textContent = artist;
             
-            // Simular cambio de carátula dinámica en el fondo Spotify
             const bgArt = document.getElementById('spotify-bg-art');
             if(title.includes('Sagitario')) {
                 bgArt.style.backgroundImage = "url('https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600')";
