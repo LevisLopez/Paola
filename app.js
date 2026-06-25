@@ -1661,12 +1661,14 @@ Player.onTrackChange = (track) => {
 // ── Album art: manual background picker ──
 async function updateAlbumArt(track) {
   const zone = document.getElementById('album-art-img');
+  const blurZone = document.getElementById('album-art-bg-blur');
   if (!zone) return;
   const bg = BACKGROUNDS.find(b => b.id === activeBgId) || BACKGROUNDS[0];
   zone.style.backgroundImage = `url('${bg.src}')`;
   zone.style.backgroundSize = 'contain';
   zone.style.backgroundPosition = 'center';
   zone.style.backgroundRepeat = 'no-repeat';
+  if (blurZone) blurZone.style.backgroundImage = `url('${bg.src}')`;
 }
 
 // ── Favorite button in controls ──────────
@@ -1783,6 +1785,13 @@ function applyBackground(id) {
       artImg.style.backgroundRepeat = 'no-repeat';
     });
 
+  // Sincronizar las capas de fondo borroso que llenan los bordes vacíos
+  [document.getElementById('album-art-bg-blur'), document.getElementById('fullscreen-art-bg-blur')]
+    .filter(Boolean)
+    .forEach(blurEl => {
+      blurEl.style.backgroundImage = `url('${bg.src}')`;
+    });
+
   // Limpiar cualquier imagen del body y screens
   [document.body, document.querySelector('.screen-player'), document.querySelector('.learning-screen')]
     .filter(Boolean)
@@ -1831,8 +1840,42 @@ function initOneBgPicker(toggleId, optionsId) {
 function initBgPicker() {
   initOneBgPicker('bg-toggle', 'bg-options');
   initOneBgPicker('fullscreen-bg-toggle', 'fullscreen-bg-options');
+  initBgSwipe('album-art-zone');
+  initBgSwipe('clean-fullscreen');
   // Aplicar fondo guardado a ambos selectores
   applyBackground(activeBgId);
+}
+
+// ── Swipe left/right on the artwork to cycle through saved backgrounds ──
+function initBgSwipe(zoneId) {
+  const zone = document.getElementById(zoneId);
+  if (!zone) return;
+  let startX = 0, startY = 0;
+
+  zone.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+
+  zone.addEventListener('touchend', (e) => {
+    const deltaX = e.changedTouches[0].clientX - startX;
+    const deltaY = e.changedTouches[0].clientY - startY;
+    // Solo activar si el movimiento es claramente horizontal (evita interferir con scroll vertical)
+    if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY) * 1.5) return;
+
+    const currentIndex = BACKGROUNDS.findIndex(b => b.id === activeBgId);
+    const safeIndex = currentIndex === -1 ? 0 : currentIndex;
+    let nextIndex;
+    if (deltaX < 0) {
+      // Swipe a la izquierda → siguiente fondo
+      nextIndex = (safeIndex + 1) % BACKGROUNDS.length;
+    } else {
+      // Swipe a la derecha → fondo anterior
+      nextIndex = (safeIndex - 1 + BACKGROUNDS.length) % BACKGROUNDS.length;
+    }
+    applyBackground(BACKGROUNDS[nextIndex].id);
+    showToast(`🖼 ${BACKGROUNDS[nextIndex].label}`);
+  }, { passive: true });
 }
 
 (async function init() {
