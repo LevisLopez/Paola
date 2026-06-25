@@ -1,4 +1,4 @@
-const CACHE_NAME = 'Paola-v62';
+const CACHE_NAME = 'Paola-v63';
 const APP_SHELL = [
   './',
   './index.html',
