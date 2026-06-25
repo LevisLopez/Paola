@@ -161,7 +161,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .screen-lyrics { z-index: 70; transform: translateY(110%); }
 .screen-lyrics.active { transform: translateY(0); }
 .screen-admin { z-index: 40; }
-.screen-player { z-index: 20; padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)); }
+.screen-player { z-index: 20; padding-bottom: calc(74px + env(safe-area-inset-bottom, 0px)); }
 
 .top-bar {
   display: flex;
@@ -1205,9 +1205,10 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
   inset: 0;
   z-index: 0;
   background-image: url('./images/bg-main.jpg');
-  background-size: cover;
-  background-position: center 28%;
+  background-size: contain;
+  background-position: center;
   background-repeat: no-repeat;
+  background-color: var(--bg);
 }
 .fullscreen-art-img::after {
   content: '';
@@ -1877,9 +1878,10 @@ body::before {
   position: absolute;
   inset: 0;
   background-image: url('./images/bg-main.jpg');
-  background-size: cover !important;
-  background-position: center 28%;
+  background-size: contain !important;
+  background-position: center !important;
   background-repeat: no-repeat !important;
+  background-color: var(--bg2);
   transition: background-image 0.5s ease;
 }
 .album-art-img::after {
@@ -2069,7 +2071,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 .bottom-nav {
   position: fixed;
   bottom: 0; left: 0; right: 0;
-  height: calc(60px + env(safe-area-inset-bottom, 0px));
+  height: calc(74px + env(safe-area-inset-bottom, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
   background: rgba(6,1,13,0.96);
   backdrop-filter: blur(18px);
@@ -2092,7 +2094,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   cursor: pointer;
   transition: color 0.2s ease;
 }
-.bottom-nav-btn i { font-size: 23px; transition: transform 0.2s ease; }
+.bottom-nav-btn i { font-size: 28px; transition: transform 0.2s ease; }
 .bottom-nav-btn.active { color: var(--gold-soft); }
 .bottom-nav-btn.active i { filter: drop-shadow(0 0 8px var(--glow-gold)); transform: translateY(-1px); }
 .bottom-nav-btn span {
@@ -2111,7 +2113,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 .list-sheet {
   position: fixed;
   left: 0; right: 0;
-  bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(74px + env(safe-area-inset-bottom, 0px));
   height: min(72svh, 600px);
   z-index: 90;
   background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
@@ -2168,7 +2170,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 .list-sheet-backdrop {
   position: fixed;
   top: 0; left: 0; right: 0;
-  bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(74px + env(safe-area-inset-bottom, 0px));
   z-index: 85;
   background: rgba(2,1,8,0.55);
   backdrop-filter: blur(2px);
@@ -2195,7 +2197,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   cursor: pointer;
   transition: color 0.2s ease;
 }
-.bg-picker-toggle i { font-size: 23px; }
+.bg-picker-toggle i { font-size: 28px; }
 .bg-picker.open .bg-picker-toggle { color: var(--gold-soft); }
 .bg-picker.open .bg-picker-toggle i { filter: drop-shadow(0 0 8px var(--glow-gold)); }
 
