@@ -1664,8 +1664,8 @@ async function updateAlbumArt(track) {
   if (!zone) return;
   const bg = BACKGROUNDS.find(b => b.id === activeBgId) || BACKGROUNDS[0];
   zone.style.backgroundImage = `url('${bg.src}')`;
-  zone.style.backgroundSize = 'cover';
-  zone.style.backgroundPosition = 'center 28%';
+  zone.style.backgroundSize = 'contain';
+  zone.style.backgroundPosition = 'center';
   zone.style.backgroundRepeat = 'no-repeat';
 }
 
@@ -1763,16 +1763,6 @@ const BACKGROUNDS = [
   { id: 'bg4', src: './images/bg-extra1.jpg', label: 'Sagittarius' },
   { id: 'bg5', src: './images/bg-extra2.jpg', label: 'Magic Room' },
   { id: 'bg6', src: './images/bg-extra3.jpg', label: 'Blue Castle' },
-
-  { id: 'bg7',  src: './images/bg-extra4.jpg',  label: 'Background 4' },
-  { id: 'bg8',  src: './images/bg-extra5.jpg',  label: 'Background 5' },
-  { id: 'bg9',  src: './images/bg-extra6.jpg',  label: 'Background 6' },
-  { id: 'bg10', src: './images/bg-extra7.jpg',  label: 'Background 7' },
-  { id: 'bg11', src: './images/bg-extra8.jpg',  label: 'Background 8' },
-  { id: 'bg12', src: './images/bg-extra9.jpg',  label: 'Background 9' },
-  { id: 'bg13', src: './images/bg-extra10.jpg', label: 'Background 10' }
-   
-   
 ];
 const LS_BG = 'house_paola_bg';
 let activeBgId = localStorage.getItem(LS_BG) || 'bg1';
@@ -1788,8 +1778,8 @@ function applyBackground(id) {
     .filter(Boolean)
     .forEach(artImg => {
       artImg.style.backgroundImage = `url('${bg.src}')`;
-      artImg.style.backgroundSize = 'cover';
-      artImg.style.backgroundPosition = 'center 28%';
+      artImg.style.backgroundSize = 'contain';
+      artImg.style.backgroundPosition = 'center';
       artImg.style.backgroundRepeat = 'no-repeat';
     });
 
