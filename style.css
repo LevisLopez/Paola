@@ -1958,7 +1958,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   background: transparent !important;
   border-radius: 0 !important;
   border: none !important;
-  padding: 16px 22px !important;
+  padding: 12px 16px !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-end !important;
@@ -2037,7 +2037,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 /* ── Progress + Controls — panel semitransparente estilo Spotify ── */
 .bottom-player-panel {
   flex-shrink: 0;
-  padding: 14px 22px calc(72px + env(safe-area-inset-bottom, 0px));
+  padding: 14px 22px calc(82px + env(safe-area-inset-bottom, 0px));
   position: relative;
   z-index: 3;
   background: linear-gradient(
