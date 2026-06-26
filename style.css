@@ -1962,25 +1962,27 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   z-index: 1;
 }
 
-/* Karaoke — pegado justo encima de la barra de progreso */
+/* Karaoke — pegado exactamente al borde superior del panel de controles, estilo Spotify */
 .learning-lyrics {
   position: absolute !important;
   left: 0 !important;
   right: 0 !important;
-  /* bottom-player-panel padding-bottom ≈ 82px+safearea, progress+times ≈ 36px, controls ≈ 70px
-     Total panel height ≈ 188px + nav 74px = 262px. Karaoke sits right on top of that. */
-  bottom: calc(188px + 74px + env(safe-area-inset-bottom, 0px)) !important;
+  /* Altura exacta del panel: padding-bottom(82px+safe) + progress-section(~42px) + controls(~70px) + padding-top(4px) ≈ 198px + nav(74px) */
+  bottom: calc(198px + env(safe-area-inset-bottom, 0px)) !important;
   top: auto !important;
-  max-height: 100px !important;
-  min-height: 0 !important;
+  height: 74px !important;
+  max-height: 74px !important;
+  min-height: 74px !important;
   z-index: 6 !important;
   background: transparent !important;
   border-radius: 0 !important;
   border: none !important;
-  padding: 6px 20px 8px !important;
+  padding: 0 24px !important;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: flex-end !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
   overflow: hidden !important;
 }
 .clean-empty-lyrics {
@@ -1989,37 +1991,43 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   font-family: var(--font-head);
   letter-spacing: 0.04em;
   text-align: center;
+  width: 100%;
 }
 
-/* Inline synced lines — grande, brillante, imposible de perder */
+/* Karaoke lines — centradas, estilo Spotify */
 .lyrics-flow .flow-line,
 .inline-line {
   font-family: var(--font-head);
-  text-shadow: 0 2px 18px rgba(0,0,0,0.85);
+  display: block;
+  text-align: center !important;
+  width: 100%;
 }
 .inline-line.active {
   color: #ffffff !important;
-  font-size: clamp(20px, 5.8vw, 28px) !important;
+  font-size: clamp(18px, 5.2vw, 24px) !important;
   font-weight: 900 !important;
   line-height: 1.25 !important;
+  text-align: center !important;
   text-shadow:
-    0 0 30px rgba(255,255,255,0.9),
-    0 0 60px rgba(240,199,94,0.6),
-    0 2px 8px rgba(0,0,0,1) !important;
+    0 0 28px rgba(255,255,255,0.95),
+    0 0 55px rgba(240,199,94,0.55),
+    0 2px 10px rgba(0,0,0,1) !important;
 }
 .inline-line.prev, .inline-line.next {
-  color: rgba(255,255,255,0.65) !important;
-  font-size: clamp(13px, 3.5vw, 16px) !important;
-  font-weight: 600 !important;
+  color: rgba(255,255,255,0.5) !important;
+  font-size: clamp(11px, 3vw, 13px) !important;
+  font-weight: 500 !important;
+  text-align: center !important;
   text-shadow: 0 1px 8px rgba(0,0,0,0.95) !important;
+  line-height: 1.3 !important;
 }
 
-/* Fondo oscuro sutil detrás del karaoke para que siempre contraste */
+/* Fondo oscuro sutil detrás del karaoke */
 .learning-lyrics::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent 0%, rgba(2,1,10,0.55) 100%);
+  background: linear-gradient(to bottom, transparent 0%, rgba(2,1,10,0.45) 100%);
   pointer-events: none;
   z-index: -1;
 }
@@ -2042,9 +2050,9 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 .track-info-row .compact-track-info { flex: 1; min-width: 0; padding: 0 !important; text-align: left; }
 .track-info-row .track-title {
   font-family: var(--font-head);
-  font-size: clamp(13px, 3.4vw, 16px);
+  font-size: clamp(11px, 2.8vw, 13px);
   font-weight: 600;
-  color: rgba(255,255,255,0.82);
+  color: rgba(255,255,255,0.75);
   letter-spacing: 0.02em;
   white-space: nowrap;
   overflow: hidden;
@@ -2052,9 +2060,9 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   text-shadow: 0 1px 8px rgba(0,0,0,0.9);
 }
 .track-info-row .track-artist {
-  font-size: clamp(10px, 2.8vw, 12px);
-  color: rgba(240,199,94,0.75);
-  margin-top: 2px;
+  font-size: clamp(9px, 2.4vw, 11px);
+  color: rgba(240,199,94,0.65);
+  margin-top: 1px;
   font-weight: 500;
   text-shadow: 0 1px 6px rgba(0,0,0,0.85);
 }
@@ -2083,7 +2091,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 /* ── Progress + Controls — panel semitransparente estilo Spotify ── */
 .bottom-player-panel {
   flex-shrink: 0;
-  padding: 14px 22px calc(82px + env(safe-area-inset-bottom, 0px));
+  padding: 4px 22px calc(82px + env(safe-area-inset-bottom, 0px));
   position: relative;
   z-index: 3;
   background: linear-gradient(
