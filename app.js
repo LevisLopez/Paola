@@ -1665,7 +1665,7 @@ async function updateAlbumArt(track) {
   if (!zone) return;
   const bg = BACKGROUNDS.find(b => b.id === activeBgId) || BACKGROUNDS[0];
   zone.style.backgroundImage = `url('${bg.src}')`;
-  zone.style.backgroundSize = 'contain';
+  zone.style.backgroundSize = 'cover';
   zone.style.backgroundPosition = 'center';
   zone.style.backgroundRepeat = 'no-repeat';
   if (blurZone) blurZone.style.backgroundImage = `url('${bg.src}')`;
@@ -1789,7 +1789,7 @@ function applyBackground(id) {
     .filter(Boolean)
     .forEach(artImg => {
       artImg.style.backgroundImage = `url('${bg.src}')`;
-      artImg.style.backgroundSize = 'contain';
+      artImg.style.backgroundSize = 'cover';
       artImg.style.backgroundPosition = 'center';
       artImg.style.backgroundRepeat = 'no-repeat';
     });
