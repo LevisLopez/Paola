@@ -161,7 +161,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .screen-lyrics { z-index: 70; transform: translateY(110%); }
 .screen-lyrics.active { transform: translateY(0); }
 .screen-admin { z-index: 40; }
-.screen-player { z-index: 20; padding-bottom: calc(74px + env(safe-area-inset-bottom, 0px)); }
+.screen-player { z-index: 20; }
 
 .top-bar {
   display: flex;
@@ -1216,7 +1216,7 @@ body[data-night="true"]::before, body.night-mode::before { opacity: 0.18; filter
   inset: 0;
   z-index: 0;
   background-image: url('./images/bg-main.jpg');
-  background-size: contain;
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-color: transparent;
@@ -1859,7 +1859,10 @@ body::before {
 .sleep-badge {
   color: var(--gold-soft);
   border-color: var(--gold-dim);
-  background: rgba(212,175,55,0.08);
+  background: rgba(8,2,15,0.7);
+  backdrop-filter: blur(8px);
+  position: relative;
+  z-index: 5;
 }
 
 /* ── Learning card — full bleed column ── */
@@ -1872,16 +1875,18 @@ body::before {
   box-shadow: none !important;
   display: flex !important;
   flex-direction: column !important;
-  flex: 1 1 auto !important;
+  position: absolute !important;
+  inset: 0 !important;
+  flex: none !important;
   min-height: 0 !important;
-  overflow: visible !important;
+  overflow: hidden !important;
 }
 
-/* ── Album art zone — the centerpiece (≈48% of viewport) ── */
+/* ── Album art zone — full-screen Spotify-style background ── */
 .album-art-zone {
-  position: relative;
-  flex: 1 1 auto;
-  min-height: 160px;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   overflow: hidden;
   background: var(--bg2);
 }
@@ -1902,7 +1907,7 @@ body::before {
   inset: 0;
   z-index: 1;
   background-image: url('./images/bg-main.jpg');
-  background-size: contain !important;
+  background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
   background-color: transparent;
@@ -1918,13 +1923,13 @@ body::before {
 body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite; }
 @keyframes art-breathe { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.045); } }
 
-/* Fade bottom so track info / lyrics read clearly */
+/* Bottom fade so the floating UI (lyrics, track info, controls, nav) stays legible */
 .album-art-zone::after {
   content: '';
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  height: 62%;
-  background: linear-gradient(to top, var(--bg) 0%, rgba(8,2,15,0.55) 45%, transparent 100%);
+  height: 56%;
+  background: linear-gradient(to top, var(--bg) 0%, rgba(8,2,15,0.65) 35%, rgba(8,2,15,0.18) 70%, transparent 100%);
   pointer-events: none;
   z-index: 1;
 }
@@ -1933,16 +1938,20 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 30%;
-  background: linear-gradient(to bottom, rgba(8,2,15,0.45), transparent);
+  height: 22%;
+  background: linear-gradient(to bottom, rgba(8,2,15,0.5), transparent);
   pointer-events: none;
   z-index: 1;
 }
 
-/* Lyrics overlaid on art */
+/* Lyrics overlaid on art — capped to ~30% of the screen, 2-3 lines max */
 .learning-lyrics {
   position: absolute !important;
-  inset: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  top: auto !important;
+  max-height: 30svh !important;
   z-index: 2 !important;
   background: transparent !important;
   border-radius: 0 !important;
@@ -1951,6 +1960,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-end !important;
+  overflow: hidden !important;
   padding-bottom: 14px !important;
 }
 .clean-empty-lyrics {
@@ -1986,6 +1996,9 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   justify-content: space-between;
   padding: 14px 20px 2px;
   flex-shrink: 0;
+  position: relative;
+  z-index: 3;
+  margin-top: auto;
 }
 .track-info-row .compact-track-info { flex: 1; min-width: 0; padding: 0 !important; text-align: left; }
 .track-info-row .track-title {
@@ -1997,12 +2010,14 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.7);
 }
 .track-info-row .track-artist {
   font-size: clamp(12px, 3.3vw, 14px);
   color: var(--accent2);
   margin-top: 3px;
   font-weight: 500;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.7);
 }
 .fav-now-btn {
   flex-shrink: 0;
@@ -2019,8 +2034,13 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 }
 
 /* ── Progress + Controls ── */
-.bottom-player-panel { flex-shrink: 0; padding: 6px 22px 10px; }
-.progress-track { background: rgba(255,255,255,0.10); height: 5px; }
+.bottom-player-panel {
+  flex-shrink: 0;
+  padding: 6px 22px 10px;
+  position: relative;
+  z-index: 3;
+}
+.progress-track { background: rgba(255,255,255,0.22); height: 5px; }
 .progress-fill {
   background: linear-gradient(90deg, var(--accent), var(--accent2)) !important;
   box-shadow: 0 0 16px var(--glow) !important;
@@ -2029,18 +2049,25 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   background: var(--gold-soft) !important;
   box-shadow: 0 0 0 5px rgba(212,175,55,0.14), 0 0 16px var(--glow-gold) !important;
 }
-.progress-times { font-family: var(--font-body); letter-spacing: 0.02em; }
+.progress-times {
+  font-family: var(--font-body);
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.7);
+}
 
 .clean-controls-row { padding-top: 10px; gap: clamp(14px, 4.2vw, 26px); justify-content: center; }
 .clean-controls-row .ctrl-btn {
-  background: rgba(255,255,255,0.05) !important;
-  color: var(--accent2) !important;
-  border: 1px solid rgba(167,139,250,0.12) !important;
+  background: transparent !important;
+  color: #fff !important;
+  border: none !important;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
 }
 .clean-controls-row .ctrl-btn.on {
-  color: var(--gold) !important;
-  background: rgba(212,175,55,0.10) !important;
-  box-shadow: 0 0 18px var(--glow-gold);
+  color: var(--gold-soft) !important;
+  background: transparent !important;
+  filter: drop-shadow(0 0 10px var(--glow-gold));
 }
 .clean-controls-row .play-btn {
   width: clamp(58px, 15vw, 70px) !important;
@@ -2089,7 +2116,14 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 .minimal-topbar {
   padding: calc(var(--safe-top) + 8px) 16px 6px !important;
   min-height: auto !important;
+  position: relative;
+  z-index: 5;
+  background: linear-gradient(180deg, rgba(8,2,15,0.55) 0%, transparent 100%);
+  flex-shrink: 0;
 }
+.minimal-topbar .house-name { text-shadow: 0 2px 12px rgba(0,0,0,0.85); }
+.minimal-topbar .house-sub { text-shadow: 0 1px 8px rgba(0,0,0,0.85); }
+.minimal-topbar .house-crown { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.85)); }
 
 /* ── Bottom navigation — royal seal ── */
 .bottom-nav {
@@ -2097,9 +2131,9 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   bottom: 0; left: 0; right: 0;
   height: calc(74px + env(safe-area-inset-bottom, 0px));
   padding-bottom: env(safe-area-inset-bottom, 0px);
-  background: rgba(6,1,13,0.96);
-  backdrop-filter: blur(18px);
-  border-top: 1px solid rgba(212,175,55,0.14);
+  background: rgba(10,3,20,0.42);
+  backdrop-filter: blur(20px) saturate(1.2);
+  border-top: 1px solid rgba(255,255,255,0.10);
   display: flex;
   align-items: center;
   justify-content: space-around;
