@@ -1759,12 +1759,21 @@ Lyrics.onSync = updateLyricsHighlight;
 // ── Init ──────────────────────────────────
 // ── House Paola — Background System ──────
 const BACKGROUNDS = [
-  { id: 'bg1', src: './images/bg-main.jpg',   label: 'Dragon Queen' },
-  { id: 'bg2', src: './images/bg-alt.jpg',    label: 'Dragon Castle' },
-  { id: 'bg3', src: './images/bg-lyrics.jpg', label: 'Galaxy Night' },
-  { id: 'bg4', src: './images/bg-extra1.jpg', label: 'Sagittarius' },
-  { id: 'bg5', src: './images/bg-extra2.jpg', label: 'Magic Room' },
-  { id: 'bg6', src: './images/bg-extra3.jpg', label: 'Blue Castle' },
+  { id: 'bg1',  src: './images/bg-main.jpg',    label: 'Dragon Queen' },
+  { id: 'bg2',  src: './images/bg-alt.jpg',     label: 'Dragon Castle' },
+  { id: 'bg3',  src: './images/bg-lyrics.jpg',  label: 'Galaxy Night' },
+  { id: 'bg4',  src: './images/bg-extra1.jpg',  label: 'Sagittarius' },
+  { id: 'bg5',  src: './images/bg-extra2.jpg',  label: 'Magic Room' },
+  { id: 'bg6',  src: './images/bg-extra3.jpg',  label: 'Blue Castle' },
+  { id: 'bg7',  src: './images/bg-extra4.jpg',  label: 'Moonlit Keep' },
+  { id: 'bg8',  src: './images/bg-extra5.jpg',  label: 'Starfall' },
+  { id: 'bg9',  src: './images/bg-extra6.jpg',  label: 'Frozen Throne' },
+  { id: 'bg10', src: './images/bg-extra7.jpg',  label: 'Ember Skies' },
+  { id: 'bg11', src: './images/bg-extra8.jpg',  label: 'Violet Reign' },
+  { id: 'bg12', src: './images/bg-extra9.jpg',  label: 'Silver Wings' },
+  { id: 'bg13', src: './images/bg-extra10.jpg', label: 'Obsidian Spire' },
+  { id: 'bg14', src: './images/bg-extra11.jpg', label: 'Crystal Tide' },
+  { id: 'bg15', src: './images/bg-extra12.jpg', label: 'Eclipse Crown' },
 ];
 const LS_BG = 'house_paola_bg';
 let activeBgId = localStorage.getItem(LS_BG) || 'bg1';
