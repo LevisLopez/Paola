@@ -1828,19 +1828,25 @@ body::before {
   font-family: var(--font-head);
   font-size: clamp(12px, 3.4vw, 17px);
   font-weight: 700;
-  color: var(--gold);
+  /* Fire gradient: deep gold → blood orange → crimson — Targaryen dragon spirit */
+  background: linear-gradient(90deg, #f0c75e 0%, #e8823a 45%, #c0392b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   letter-spacing: 0.14em;
   line-height: 1.25;
-  text-shadow: 0 0 14px var(--glow-gold);
+  filter: drop-shadow(0 0 10px rgba(212,100,30,0.55));
 }
 .house-sag { color: var(--accent2); font-size: 0.82em; margin-left: 0.15em; }
 .house-sub {
   font-family: var(--font-head);
   font-size: clamp(9px, 2.6vw, 12px);
   font-weight: 500;
-  color: var(--text3);
+  /* ember glow for subtitle */
+  color: #e8823a;
   letter-spacing: 0.2em;
   margin-top: 3px;
+  text-shadow: 0 0 10px rgba(232,130,58,0.5);
 }
 
 .minimal-topbar {
@@ -1946,24 +1952,25 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   z-index: 1;
 }
 
-/* Lyrics overlaid on art — capped to ~30% of the screen, 2-3 lines max */
+/* Lyrics overlaid on art — compact 2-3 lines Spotify style, sits above controls */
 .learning-lyrics {
   position: absolute !important;
   left: 0 !important;
   right: 0 !important;
-  bottom: 0 !important;
+  /* Sit just above the bottom-player-panel (~160px tall) + nav bar (74px) */
+  bottom: calc(160px + 74px + env(safe-area-inset-bottom, 0px)) !important;
   top: auto !important;
-  max-height: 30svh !important;
-  z-index: 2 !important;
+  max-height: 88px !important;
+  min-height: 0 !important;
+  z-index: 4 !important;
   background: transparent !important;
   border-radius: 0 !important;
   border: none !important;
-  padding: 12px 16px !important;
+  padding: 0 22px 4px !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-end !important;
   overflow: hidden !important;
-  padding-bottom: 14px !important;
 }
 .clean-empty-lyrics {
   color: rgba(246,241,255,0.42);
@@ -1973,7 +1980,7 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
   text-align: center;
 }
 
-/* Inline synced lines on the art — cinematic glow */
+/* Inline synced lines on the art — cinematic glow, Spotify-compact */
 .lyrics-flow .flow-line,
 .inline-line {
   font-family: var(--font-head);
@@ -1981,25 +1988,29 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 }
 .inline-line.active {
   color: var(--text);
-  font-size: clamp(20px, 5.4vw, 29px);
-  font-weight: 700;
-  line-height: 1.22;
-  text-shadow: 0 0 22px var(--glow-gold), 0 2px 14px rgba(0,0,0,0.8);
+  font-size: clamp(14px, 3.8vw, 18px);
+  font-weight: 600;
+  line-height: 1.25;
+  text-shadow: 0 0 18px var(--glow-gold), 0 2px 12px rgba(0,0,0,0.8);
 }
 .inline-line.prev, .inline-line.next {
   color: rgba(246,241,255,0.38);
-  font-size: 13px;
+  font-size: 11px;
 }
 
-/* ── Track info row ── */
+/* ── Track info row — just above controls ── */
 .track-info-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px 2px;
+  padding: 8px 20px 2px;
   flex-shrink: 0;
-  position: relative;
-  z-index: 3;
+  position: absolute !important;
+  left: 0;
+  right: 0;
+  /* Sits just above bottom-player-panel + nav */
+  bottom: calc(152px + 74px + env(safe-area-inset-bottom, 0px));
+  z-index: 5;
 }
 .track-info-row .compact-track-info { flex: 1; min-width: 0; padding: 0 !important; text-align: left; }
 .track-info-row .track-title {
@@ -2022,11 +2033,19 @@ body.playing .album-art-zone { animation: art-breathe 4.5s ease-in-out infinite;
 }
 .fav-now-btn {
   flex-shrink: 0;
-  font-size: 22px !important;
-  color: rgba(212,175,55,0.4) !important;
+  font-size: 24px !important;
+  color: rgba(212,175,55,0.5) !important;
   background: none !important;
   border: none !important;
+  width: 42px !important;
+  height: 42px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer;
   transition: color 0.2s ease, transform 0.15s ease;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 .fav-now-btn:active { transform: scale(0.88); }
 .fav-now-btn.on, .fav-now-btn[style*="a855f7"] {
