@@ -1852,6 +1852,7 @@ body::before {
   letter-spacing: 0.32em;
   margin-top: 3px;
   text-align: center;
+  text-transform: none !important;
   width: 100%;
   display: block;
   text-shadow:
