@@ -1773,7 +1773,7 @@ const BACKGROUNDS = [
   { id: 'bg12', src: './images/bg-extra9.jpg',  label: 'Silver Wings' },
   { id: 'bg13', src: './images/bg-extra10.jpg', label: 'Obsidian Spire' },
   { id: 'bg14', src: './images/bg-extra11.jpg', label: 'Crystal Tide' },
-  { id: 'bg15', src: './images/bg-extra12.jpg', label: 'Eclipse Crown' },
+  
 ];
 const LS_BG = 'house_paola_bg';
 let activeBgId = localStorage.getItem(LS_BG) || 'bg1';
